@@ -876,8 +876,7 @@ tr:hover td { background: var(--bg-elevated); }
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-const R_U = typeof process !== 'undefined' ? process.env.R_U : (window.__REDIS_URL__ || '');
-const R_T = typeof process !== 'undefined' ? process.env.R_T : (window.__REDIS_TOKEN__ || '');
+let R_U = '', R_T = '';
 
 async function rFetch(path, method = 'GET', body = null) {
   const opts = {
@@ -1352,7 +1351,20 @@ document.addEventListener('keydown', e => {
   el.addEventListener('click', e => { if (e.target === el) { closePromptModal(); closeCatModal(); closeConfirm(); } });
 });
 
-checkSession();
+async function bootstrap() {
+  try {
+    const cfg = await fetch('/api/config').then(r => r.json());
+    R_U = cfg.R_U;
+    R_T = cfg.R_T;
+  } catch {
+    document.getElementById('loginErr').textContent = 'Gagal memuat konfigurasi server.';
+    document.getElementById('loginErr').classList.add('show');
+    return;
+  }
+  checkSession();
+}
+
+bootstrap();
 </script>
 </body>
 </html>
