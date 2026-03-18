@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breach Prompt — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0c0c;
+  --bg-card: #111111;
+  --bg-elevated: #161616;
+  --bg-hover: #1c1c1c;
+  --border: #2a2a2a;
+  --border-hover: #404040;
+  --border-active: #888888;
+  --text: #f0f0f0;
+  --text-muted: #888888;
+  --text-subtle: #555555;
+  --white: #ffffff;
+  --red: #ff4444;
+  --red-dim: rgba(255,68,68,0.1);
+  --green: #44ff88;
+  --green-dim: rgba(68,255,136,0.08);
+  --yellow: #ffcc44;
+  --yellow-dim: rgba(255,204,68,0.08);
+  --grid-size: 48px;
+  --grid-color: rgba(255,255,255,0.03);
+  --radius: 4px;
+  --radius-md: 6px;
+  --font: 'Ubuntu Mono', monospace;
+  --transition: all 0.16s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ─── LOGIN SCREEN ─── */
+.login-screen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+
+.login-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md);
+  width: 100%; max-width: 380px;
+  overflow: hidden;
+}
+
+.login-top {
+  background: var(--bg);
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+
+.login-top::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.login-logo {
+  position: relative; z-index: 1;
+  font-size: 1.3rem; font-weight: 700; color: var(--white);
+  letter-spacing: 0.04em;
+}
+
+.login-logo span { color: var(--text-subtle); font-weight: 400; }
+.login-sub { position: relative; z-index: 1; font-size: 0.65rem; color: var(--text-subtle); margin-top: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.login-form { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem; }
+
+.field-label {
+  display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-subtle); margin-bottom: 0.35rem;
+}
+
+.field-input {
+  width: 100%; padding: 0.7rem 0.9rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text); font-family: var(--font); font-size: 0.85rem;
+  outline: none; transition: var(--transition);
+}
+
+.field-input:focus { border-color: var(--border-active); background: var(--bg-elevated); }
+
+.btn-login {
+  width: 100%; padding: 0.8rem;
+  background: var(--white);
+  border: 1px solid var(--white);
+  border-radius: var(--radius-md);
+  color: #0c0c0c;
+  font-family: var(--font); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition); margin-top: 0.25rem;
+}
+
+.btn-login:hover { background: transparent; color: var(--white); }
+.btn-login:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.login-err {
+  font-size: 0.72rem; color: var(--red);
+  background: var(--red-dim);
+  border: 1px solid rgba(255,68,68,0.2);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  display: none;
+}
+
+.login-err.show { display: block; }
+
+/* ─── APP SHELL ─── */
+.app { display: none; flex-direction: column; min-height: 100vh; }
+.app.show { display: flex; }
+
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(12,12,12,0.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.hdr {
+  max-width: 1440px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem; height: 58px;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 0.6rem;
+  text-decoration: none; color: var(--text);
+  font-weight: 700; font-size: 1rem; letter-spacing: 0.04em;
+}
+
+.logo-mark {
+  width: 28px; height: 28px;
+  background: var(--white);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.logo-mark svg { width: 14px; height: 14px; color: #0c0c0c; }
+
+.logo em { font-style: normal; color: var(--white); }
+
+.hdr-right { display: flex; align-items: center; gap: 0.5rem; }
+
+.admin-badge {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-subtle);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.5rem; border-radius: 3px;
+}
+
+.btn-sm {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font-family: var(--font); font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: var(--radius); cursor: pointer; transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-ghost {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+
+.btn-white {
+  background: var(--white); border: 1px solid var(--white);
+  color: #0c0c0c;
+}
+
+.btn-white:hover { background: transparent; color: var(--white); }
+
+.btn-danger {
+  background: transparent; border: 1px solid rgba(255,68,68,0.3);
+  color: var(--red);
+}
+
+.btn-danger:hover { background: var(--red-dim); border-color: var(--red); }
+
+/* ─── MAIN LAYOUT ─── */
+.main { max-width: 1440px; margin: 0 auto; padding: 1.5rem; flex: 1; }
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem; overflow-x: auto;
+}
+
+.tab-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 1.1rem;
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  color: var(--text-muted); font-family: var(--font); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition); white-space: nowrap;
+  margin-bottom: -1px;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--white); border-bottom-color: var(--white); }
+
+.tab-count {
+  background: var(--bg-hover); border: 1px solid var(--border);
+  color: var(--text-subtle); font-size: 0.6rem;
+  padding: 0.1rem 0.35rem; border-radius: 3px;
+}
+
+.tab-btn.active .tab-count { background: var(--bg-elevated); color: var(--text-muted); }
+
+/* ─── TAB PANELS ─── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ─── STATS ─── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.stat-card {
+  background: var(--bg-card);
+  padding: 1.25rem 1.5rem;
+}
+
+.stat-card-label {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-subtle); margin-bottom: 0.4rem;
+}
+
+.stat-card-val {
+  font-size: 1.8rem; font-weight: 700; color: var(--white); line-height: 1;
+}
+
+.stat-card-sub { font-size: 0.68rem; color: var(--text-subtle); margin-top: 0.2rem; }
+
+.charts-row {
+  display: grid; grid-template-columns: 1fr;
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) { .charts-row { grid-template-columns: 1fr 1fr; } }
+
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.chart-title {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-subtle); margin-bottom: 1rem;
+}
+
+.bar-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.bar-item { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.bar-label-row { display: flex; justify-content: space-between; align-items: center; }
+
+.bar-name { font-size: 0.75rem; color: var(--text-muted); }
+.bar-val { font-size: 0.7rem; font-weight: 700; color: var(--text-subtle); }
+
+.bar-track {
+  height: 4px; background: var(--bg-hover);
+  border-radius: 2px; overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%; background: var(--text-muted);
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+.len-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.len-item { display: flex; align-items: center; gap: 0.75rem; }
+.len-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.len-label { font-size: 0.75rem; color: var(--text-muted); flex: 1; }
+.len-val { font-size: 0.75rem; font-weight: 700; color: var(--text-subtle); }
+
+/* ─── SECTION HEADER ─── */
+.section-hdr {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 640px) {
+  .section-hdr { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+.section-title {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+
+/* ─── SEARCH BAR ─── */
+.search-bar {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 300px; width: 100%;
+}
+
+.search-bar:focus-within { border-color: var(--border-active); }
+
+.search-bar input {
+  flex: 1; border: none; background: transparent;
+  color: var(--text); font-family: var(--font); font-size: 0.78rem; outline: none;
+}
+
+.search-bar input::placeholder { color: var(--text-subtle); }
+
+/* ─── TABLE ─── */
+.table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.table-inner { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; }
+
+thead tr { border-bottom: 1px solid var(--border); }
+
+th {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-subtle);
+  padding: 0.75rem 1rem; text-align: left;
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+td {
+  padding: 0.85rem 1rem; font-size: 0.78rem;
+  color: var(--text-muted); vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg-elevated); }
+
+.td-title { color: var(--text); font-weight: 700; max-width: 200px; }
+.td-preview { color: var(--text-subtle); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.td-cat { white-space: nowrap; }
+
+.pill {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-subtle);
+  background: var(--bg-elevated);
+  white-space: nowrap;
+}
+
+.pill.short { color: #aaaaaa; }
+.pill.medium { color: #cccccc; }
+.pill.long { color: #efefef; border-color: #444; }
+
+.actions { display: flex; gap: 0.35rem; }
+
+.table-empty {
+  text-align: center; padding: 3rem;
+  color: var(--text-subtle); font-size: 0.8rem;
+}
+
+/* ─── FORM / MODAL ─── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md);
+  width: 100%; max-width: 600px; max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.96) translateY(16px);
+  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1);
+}
+
+.overlay.open .modal { transform: scale(1) translateY(0); }
+
+.modal-hdr {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-hdr-title {
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text);
+}
+
+.close-btn {
+  width: 28px; height: 28px;
+  border-radius: var(--radius); border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+
+.close-btn:hover { border-color: var(--border-hover); color: var(--text); }
+
+.modal-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.field-hint { font-size: 0.65rem; color: var(--text-subtle); }
+
+.field-input, .field-textarea, .field-select {
+  width: 100%; padding: 0.65rem 0.9rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text); font-family: var(--font); font-size: 0.82rem;
+  outline: none; transition: var(--transition);
+}
+
+.field-input:focus, .field-textarea:focus, .field-select:focus {
+  border-color: var(--border-active); background: var(--bg-elevated);
+}
+
+.field-textarea { resize: vertical; min-height: 160px; line-height: 1.6; }
+
+.field-select option { background: #111; }
+
+.cat-checkboxes {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+}
+
+.cat-check-label {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.7rem; font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer; transition: var(--transition);
+  user-select: none;
+}
+
+.cat-check-label:hover { border-color: var(--border-hover); color: var(--text); }
+
+.cat-check-label input { display: none; }
+
+.cat-check-label.checked {
+  background: var(--bg-elevated);
+  border-color: var(--border-active);
+  color: var(--white);
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 0.5rem; justify-content: flex-end;
+}
+
+.btn-full {
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  padding: 0.7rem 1.25rem;
+  font-family: var(--font); font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: var(--radius-md); cursor: pointer; transition: var(--transition);
+}
+
+/* ─── CONFIRM MODAL ─── */
+.confirm-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md);
+  width: 100%; max-width: 380px;
+  padding: 1.5rem;
+  transform: scale(0.96) translateY(12px);
+  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1);
+}
+
+.overlay.open .confirm-modal { transform: scale(1) translateY(0); }
+
+.confirm-icon {
+  width: 40px; height: 40px; margin-bottom: 1rem;
+  background: var(--red-dim); border: 1px solid rgba(255,68,68,0.2);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--red);
+}
+
+.confirm-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+.confirm-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem; }
+.confirm-actions { display: flex; gap: 0.5rem; }
+
+/* ─── TOAST ─── */
+.toast-container {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem; color: var(--text);
+  min-width: 220px; pointer-events: all;
+  animation: slideIn 0.25s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast.fadeOut { animation: fadeOut 0.25s ease forwards; }
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+.toast-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.toast.ok .toast-dot { background: var(--green); }
+.toast.err .toast-dot { background: var(--red); }
+.toast.info .toast-dot { background: var(--text-muted); }
+
+/* ─── CHANGE PW ─── */
+.settings-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  max-width: 440px;
+}
+
+.settings-title {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-subtle);
+  margin-bottom: 1.25rem; padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ─── LOADING ─── */
+.page-loader {
+  display: flex; align-items: center; justify-content: center;
+  padding: 4rem; color: var(--text-subtle); font-size: 0.78rem; gap: 0.6rem;
+}
+
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--text-muted);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-top">
+      <div class="login-logo"><em>Breach</em><span>Prompt</span></div>
+      <div class="login-sub">// admin access</div>
+    </div>
+    <div class="login-form">
+      <div>
+        <label class="field-label">Username</label>
+        <input class="field-input" type="text" id="loginUser" placeholder="admin" autocomplete="username">
+      </div>
+      <div>
+        <label class="field-label">Password</label>
+        <input class="field-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="login-err" id="loginErr">Username atau password salah.</div>
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <header>
+    <div class="hdr">
+      <a class="logo" href="/">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <em>Breach</em>&nbsp;Prompt
+      </a>
+      <div class="hdr-right">
+        <span class="admin-badge">Admin</span>
+        <a href="/" class="btn-sm btn-ghost">← Lihat Site</a>
+        <button class="btn-sm btn-ghost" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('stats', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistik
+      </button>
+      <button class="tab-btn" onclick="switchTab('prompts', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Prompt
+        <span class="tab-count" id="tabPromptCount">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('categories', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Kategori
+        <span class="tab-count" id="tabCatCount">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('settings', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+
+    <!-- STATS PANEL -->
+    <div class="panel active" id="panel-stats">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-card-label">Total Prompt</div><div class="stat-card-val" id="sTotal">—</div></div>
+        <div class="stat-card"><div class="stat-card-label">Kategori</div><div class="stat-card-val" id="sCat">—</div></div>
+        <div class="stat-card"><div class="stat-card-label">Prompt Baru (24j)</div><div class="stat-card-val" id="sNew">—</div></div>
+        <div class="stat-card"><div class="stat-card-label">Rata-rata Char</div><div class="stat-card-val" id="sAvg">—</div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Prompt per Kategori</div>
+          <div class="bar-list" id="catBars"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Distribusi Panjang</div>
+          <div class="len-list" id="lenDist"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMPTS PANEL -->
+    <div class="panel" id="panel-prompts">
+      <div class="section-hdr">
+        <div class="section-title">
+          Daftar Prompt
+          <span class="tab-count" id="promptTotal">0</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <div class="search-bar">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-subtle);flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari prompt..." id="promptSearch" oninput="renderPromptsTable()">
+          </div>
+          <button class="btn-sm btn-white" onclick="openPromptModal()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Prompt
+          </button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-inner">
+          <table>
+            <thead>
+              <tr>
+                <th>Judul</th>
+                <th>Kategori</th>
+                <th>Panjang</th>
+                <th>Dibuat</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="promptsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES PANEL -->
+    <div class="panel" id="panel-categories">
+      <div class="section-hdr">
+        <div class="section-title">
+          Daftar Kategori
+          <span class="tab-count" id="catTotal">0</span>
+        </div>
+        <button class="btn-sm btn-white" onclick="openCatModal()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Kategori
+        </button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-inner">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>ID</th>
+                <th>Jumlah Prompt</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="catsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="panel" id="panel-settings">
+      <div class="settings-card">
+        <div class="settings-title">Ganti Password Admin</div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem;">
+          <div>
+            <label class="field-label">Password Lama</label>
+            <input class="field-input" type="password" id="oldPass" placeholder="••••••••">
+          </div>
+          <div>
+            <label class="field-label">Password Baru</label>
+            <input class="field-input" type="password" id="newPass" placeholder="••••••••">
+          </div>
+          <div>
+            <label class="field-label">Konfirmasi Password Baru</label>
+            <input class="field-input" type="password" id="confPass" placeholder="••••••••">
+          </div>
+          <button class="btn-sm btn-white" style="width:fit-content;margin-top:0.25rem;" onclick="changePassword()">Simpan Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROMPT MODAL -->
+<div class="overlay" id="promptOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="promptModalTitle">Tambah Prompt</div>
+      <button class="close-btn" onclick="closePromptModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editPromptId">
+      <div class="field">
+        <label class="field-label">Judul *</label>
+        <input class="field-input" type="text" id="fTitle" placeholder="Nama prompt...">
+      </div>
+      <div class="field">
+        <label class="field-label">Deskripsi</label>
+        <input class="field-input" type="text" id="fDesc" placeholder="Deskripsi singkat...">
+      </div>
+      <div class="field">
+        <label class="field-label">Isi Prompt *</label>
+        <textarea class="field-textarea" id="fContent" placeholder="Masukkan prompt disini..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Kategori</label>
+        <div class="cat-checkboxes" id="catCheckboxes"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-full btn-ghost" onclick="closePromptModal()">Batal</button>
+      <button class="btn-full btn-white" onclick="savePrompt()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MODAL -->
+<div class="overlay" id="catOverlay">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="catModalTitle">Tambah Kategori</div>
+      <button class="close-btn" onclick="closeCatModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editCatId">
+      <div class="field">
+        <label class="field-label">Nama Kategori *</label>
+        <input class="field-input" type="text" id="fCatName" placeholder="contoh: Jailbreak, Roleplay...">
+      </div>
+      <div class="field">
+        <label class="field-label">ID (slug) *</label>
+        <input class="field-input" type="text" id="fCatId" placeholder="jailbreak, roleplay... (auto dari nama)">
+        <span class="field-hint">Huruf kecil, tanpa spasi. Auto-generate dari nama.</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-full btn-ghost" onclick="closeCatModal()">Batal</button>
+      <button class="btn-full btn-white" onclick="saveCat()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="confirmOverlay">
+  <div class="confirm-modal">
+    <div class="confirm-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+    </div>
+    <div class="confirm-title" id="confirmTitle">Hapus item ini?</div>
+    <div class="confirm-desc" id="confirmDesc">Tindakan ini tidak bisa dibatalkan.</div>
+    <div class="confirm-actions">
+      <button class="btn-full btn-ghost" style="flex:1;" onclick="closeConfirm()">Batal</button>
+      <button class="btn-full btn-danger" style="flex:1;" id="confirmOkBtn">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const R_U = typeof process !== 'undefined' ? process.env.R_U : (window.__REDIS_URL__ || '');
+const R_T = typeof process !== 'undefined' ? process.env.R_T : (window.__REDIS_TOKEN__ || '');
+
+async function rFetch(path, method = 'GET', body = null) {
+  const opts = {
+    method: body ? 'POST' : method,
+    headers: { 'Authorization': `Bearer ${R_T}`, 'Content-Type': 'application/json' }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${R_U}${path}`, opts);
+  const j = await res.json();
+  return j.result;
+}
+
+const rGet = key => rFetch(`/get/${encodeURIComponent(key)}`);
+const rSet = (key, val) => rFetch('', 'POST', ['SET', key, typeof val === 'string' ? val : JSON.stringify(val)]);
+const rDel = key => rFetch('', 'POST', ['DEL', key]);
+const rSadd = (key, ...members) => rFetch('', 'POST', ['SADD', key, ...members]);
+const rSrem = (key, ...members) => rFetch('', 'POST', ['SREM', key, ...members]);
+const rSmembers = key => rFetch(`/smembers/${encodeURIComponent(key)}`);
+const rRpush = (key, ...vals) => rFetch('', 'POST', ['RPUSH', key, ...vals]);
+const rLrange = (key, s, e) => rFetch(`/lrange/${encodeURIComponent(key)}/${s}/${e}`);
+const rLrem = (key, count, val) => rFetch('', 'POST', ['LREM', key, count, val]);
+async function rMGet(keys) {
+  if (!keys.length) return [];
+  return rFetch(`/mget/${keys.map(k => encodeURIComponent(k)).join('/')}`);
+}
+
+
+
+let cats = [];
+let prompts = [];
+let sessionUser = null;
+
+async function doLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginErr');
+  if (!user || !pass) { err.textContent = 'Isi username dan password.'; err.classList.add('show'); return; }
+  btn.disabled = true; btn.textContent = 'Memeriksa...';
+  err.classList.remove('show');
+  try {
+    const stored = await rGet(`admin:user:${user}`);
+    if (!stored) { throw new Error('not found'); }
+    const data = JSON.parse(stored);
+    if (data.password !== pass) throw new Error('wrong');
+    sessionUser = user;
+    sessionStorage.setItem('bp_admin', user);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    await loadAll();
+  } catch {
+    err.textContent = 'Username atau password salah.';
+    err.classList.add('show');
+  }
+  btn.disabled = false; btn.textContent = 'Masuk';
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginPass').focus(); });
+
+function doLogout() {
+  sessionStorage.removeItem('bp_admin');
+  sessionUser = null;
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPass').value = '';
+}
+
+async function checkSession() {
+  const u = sessionStorage.getItem('bp_admin');
+  if (!u) return;
+  try {
+    const stored = await rGet(`admin:user:${u}`);
+    if (!stored) return;
+    sessionUser = u;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    await loadAll();
+  } catch {}
+}
+
+async function loadAll() {
+  try {
+    const [catIds, promptIds] = await Promise.all([
+      rSmembers('categories'),
+      rLrange('prompts:list', 0, -1)
+    ]);
+
+    const catIds_ = catIds || [];
+    const promptIds_ = promptIds || [];
+
+    if (catIds_.length) {
+      const vals = await rMGet(catIds_.map(id => `category:${id}`));
+      cats = catIds_.map((id, i) => {
+        try { return { id, ...JSON.parse(vals[i] || '{}') }; } catch { return { id, name: id }; }
+      }).filter(c => c.name);
+    } else { cats = []; }
+
+    if (promptIds_.length) {
+      const vals = await rMGet(promptIds_.map(id => `prompt:${id}`));
+      prompts = promptIds_.map((id, i) => {
+        try {
+          const p = JSON.parse(vals[i] || '{}');
+          p.id = id;
+          p.charCount = p.content ? p.content.length : 0;
+          p.lengthClass = getLenClass(p.charCount);
+          p.categories = Array.isArray(p.category_ids)
+            ? cats.filter(c => p.category_ids.includes(c.id))
+            : [];
+          return p;
+        } catch { return null; }
+      }).filter(Boolean);
+    } else { prompts = []; }
+
+    document.getElementById('tabPromptCount').textContent = prompts.length;
+    document.getElementById('tabCatCount').textContent = cats.length;
+    document.getElementById('promptTotal').textContent = prompts.length;
+    document.getElementById('catTotal').textContent = cats.length;
+
+    renderStats();
+    renderPromptsTable();
+    renderCatsTable();
+  } catch (e) {
+    toast('Gagal memuat data Redis.', 'err');
+  }
+}
+
+function getLenClass(n) {
+  if (n < 1000) return 'short';
+  if (n < 4000) return 'medium';
+  return 'long';
+}
+
+function fmtNum(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function esc(t) {
+  if (!t) return '';
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderStats() {
+  const total = prompts.length;
+  const now = new Date();
+  const newToday = prompts.filter(p => p.created_at && (now - new Date(p.created_at)) < 86400000).length;
+  const avg = total ? Math.round(prompts.reduce((a, p) => a + p.charCount, 0) / total) : 0;
+
+  document.getElementById('sTotal').textContent = total;
+  document.getElementById('sCat').textContent = cats.length;
+  document.getElementById('sNew').textContent = newToday;
+  document.getElementById('sAvg').textContent = fmtNum(avg);
+
+  const counts = {};
+  prompts.forEach(p => {
+    (p.category_ids || []).forEach(cid => { counts[cid] = (counts[cid] || 0) + 1; });
+  });
+  const maxCount = Math.max(1, ...Object.values(counts));
+  const catBars = document.getElementById('catBars');
+  if (!cats.length) { catBars.innerHTML = '<div style="font-size:0.72rem;color:var(--text-subtle);">Belum ada kategori.</div>'; }
+  else {
+    catBars.innerHTML = cats.map(c => {
+      const cnt = counts[c.id] || 0;
+      const pct = Math.round((cnt / maxCount) * 100);
+      return `<div class="bar-item">
+        <div class="bar-label-row">
+          <span class="bar-name">${esc(c.name)}</span>
+          <span class="bar-val">${cnt}</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  const short = prompts.filter(p => p.lengthClass === 'short').length;
+  const medium = prompts.filter(p => p.lengthClass === 'medium').length;
+  const long = prompts.filter(p => p.lengthClass === 'long').length;
+  document.getElementById('lenDist').innerHTML = `
+    <div class="len-item"><div class="len-dot" style="background:#aaa"></div><div class="len-label">Pendek (&lt;1K char)</div><div class="len-val">${short}</div></div>
+    <div class="len-item"><div class="len-dot" style="background:#ccc"></div><div class="len-label">Sedang (1K–4K char)</div><div class="len-val">${medium}</div></div>
+    <div class="len-item"><div class="len-dot" style="background:#eee"></div><div class="len-label">Panjang (&gt;4K char)</div><div class="len-val">${long}</div></div>
+  `;
+}
+
+function renderPromptsTable() {
+  const q = (document.getElementById('promptSearch')?.value || '').toLowerCase();
+  let data = [...prompts];
+  if (q) data = data.filter(p =>
+    (p.title || '').toLowerCase().includes(q) ||
+    (p.description || '').toLowerCase().includes(q)
+  );
+  data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const body = document.getElementById('promptsBody');
+  if (!data.length) {
+    body.innerHTML = `<tr><td colspan="5" class="table-empty">Tidak ada prompt.</td></tr>`;
+    return;
+  }
+  body.innerHTML = data.map(p => `
+    <tr>
+      <td>
+        <div class="td-title">${esc(p.title)}</div>
+        ${p.description ? `<div style="font-size:0.7rem;color:var(--text-subtle);margin-top:0.2rem;">${esc(p.description)}</div>` : ''}
+      </td>
+      <td class="td-cat">${p.categories.map(c => `<span class="pill">${esc(c.name)}</span>`).join(' ') || '<span style="color:var(--text-subtle);">—</span>'}</td>
+      <td><span class="pill ${p.lengthClass}">${fmtNum(p.charCount)} char</span></td>
+      <td style="white-space:nowrap;">${fmtDate(p.created_at)}</td>
+      <td>
+        <div class="actions">
+          <button class="btn-sm btn-ghost" onclick="openEditPrompt('${p.id}')">Edit</button>
+          <button class="btn-sm btn-danger" onclick="confirmDeletePrompt('${p.id}')">Hapus</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function renderCatsTable() {
+  const counts = {};
+  prompts.forEach(p => {
+    (p.category_ids || []).forEach(cid => { counts[cid] = (counts[cid] || 0) + 1; });
+  });
+  const body = document.getElementById('catsBody');
+  if (!cats.length) {
+    body.innerHTML = `<tr><td colspan="4" class="table-empty">Belum ada kategori.</td></tr>`;
+    return;
+  }
+  body.innerHTML = cats.map(c => `
+    <tr>
+      <td style="font-weight:700;color:var(--text);">${esc(c.name)}</td>
+      <td><code style="font-size:0.72rem;color:var(--text-subtle);">${esc(c.id)}</code></td>
+      <td>${counts[c.id] || 0} prompt</td>
+      <td>
+        <div class="actions">
+          <button class="btn-sm btn-ghost" onclick="openEditCat('${c.id}')">Edit</button>
+          <button class="btn-sm btn-danger" onclick="confirmDeleteCat('${c.id}')">Hapus</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`panel-${name}`).classList.add('active');
+}
+
+function openPromptModal(id = null) {
+  document.getElementById('editPromptId').value = '';
+  document.getElementById('fTitle').value = '';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fContent').value = '';
+  document.getElementById('promptModalTitle').textContent = 'Tambah Prompt';
+  renderCatCheckboxes([]);
+  document.getElementById('promptOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openEditPrompt(id) {
+  const p = prompts.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('editPromptId').value = id;
+  document.getElementById('fTitle').value = p.title || '';
+  document.getElementById('fDesc').value = p.description || '';
+  document.getElementById('fContent').value = p.content || '';
+  document.getElementById('promptModalTitle').textContent = 'Edit Prompt';
+  renderCatCheckboxes(p.category_ids || []);
+  document.getElementById('promptOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderCatCheckboxes(selected) {
+  const wrap = document.getElementById('catCheckboxes');
+  if (!cats.length) { wrap.innerHTML = '<span style="font-size:0.72rem;color:var(--text-subtle);">Belum ada kategori. Buat dulu di tab Kategori.</span>'; return; }
+  wrap.innerHTML = cats.map(c => {
+    const checked = selected.includes(c.id) ? 'checked' : '';
+    return `<label class="cat-check-label ${checked ? 'checked' : ''}" onclick="toggleCatCheck(this,'${c.id}')">
+      <input type="checkbox" value="${c.id}" ${checked}>
+      ${esc(c.name)}
+    </label>`;
+  }).join('');
+}
+
+function toggleCatCheck(label) {
+  label.classList.toggle('checked');
+  label.querySelector('input').checked = label.classList.contains('checked');
+}
+
+function getSelectedCats() {
+  return [...document.querySelectorAll('#catCheckboxes input:checked')].map(i => i.value);
+}
+
+function closePromptModal() {
+  document.getElementById('promptOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function savePrompt() {
+  const id = document.getElementById('editPromptId').value;
+  const title = document.getElementById('fTitle').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  const content = document.getElementById('fContent').value.trim();
+  const category_ids = getSelectedCats();
+
+  if (!title || !content) { toast('Judul dan isi prompt wajib diisi.', 'err'); return; }
+
+  const isEdit = !!id;
+  const promptId = isEdit ? id : 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+  const created_at = isEdit ? (prompts.find(p => p.id === id)?.created_at || new Date().toISOString()) : new Date().toISOString();
+
+  const data = { title, description: desc, content, category_ids, created_at };
+
+  try {
+    await rSet(`prompt:${promptId}`, data);
+    if (!isEdit) await rRpush('prompts:list', promptId);
+    toast(isEdit ? 'Prompt berhasil diperbarui.' : 'Prompt berhasil ditambahkan.', 'ok');
+    closePromptModal();
+    await loadAll();
+  } catch { toast('Gagal menyimpan prompt.', 'err'); }
+}
+
+function confirmDeletePrompt(id) {
+  const p = prompts.find(x => x.id === id);
+  document.getElementById('confirmTitle').textContent = 'Hapus Prompt?';
+  document.getElementById('confirmDesc').textContent = `"${p?.title || id}" akan dihapus permanen.`;
+  document.getElementById('confirmOkBtn').onclick = () => deletePrompt(id);
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+async function deletePrompt(id) {
+  try {
+    await Promise.all([rDel(`prompt:${id}`), rLrem('prompts:list', 0, id)]);
+    toast('Prompt dihapus.', 'ok');
+    closeConfirm();
+    await loadAll();
+  } catch { toast('Gagal menghapus.', 'err'); }
+}
+
+function openCatModal() {
+  document.getElementById('editCatId').value = '';
+  document.getElementById('fCatName').value = '';
+  document.getElementById('fCatId').value = '';
+  document.getElementById('catModalTitle').textContent = 'Tambah Kategori';
+  document.getElementById('catOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openEditCat(id) {
+  const c = cats.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('editCatId').value = id;
+  document.getElementById('fCatName').value = c.name || '';
+  document.getElementById('fCatId').value = id;
+  document.getElementById('catModalTitle').textContent = 'Edit Kategori';
+  document.getElementById('catOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('fCatName').addEventListener('input', e => {
+  if (!document.getElementById('editCatId').value) {
+    document.getElementById('fCatId').value = e.target.value
+      .toLowerCase().trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+  }
+});
+
+function closeCatModal() {
+  document.getElementById('catOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function saveCat() {
+  const editId = document.getElementById('editCatId').value;
+  const name = document.getElementById('fCatName').value.trim();
+  const id = document.getElementById('fCatId').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  if (!name || !id) { toast('Nama dan ID kategori wajib diisi.', 'err'); return; }
+
+  try {
+    if (editId) {
+      if (editId !== id) {
+        await rSrem('categories', editId);
+        await rDel(`category:${editId}`);
+        const updated = prompts.filter(p => (p.category_ids || []).includes(editId));
+        for (const p of updated) {
+          const newIds = p.category_ids.map(cid => cid === editId ? id : cid);
+          const d = { title: p.title, description: p.description, content: p.content, category_ids: newIds, created_at: p.created_at };
+          await rSet(`prompt:${p.id}`, d);
+        }
+      }
+      await rSet(`category:${id}`, { name });
+      await rSadd('categories', id);
+    } else {
+      const existing = await rGet(`category:${id}`);
+      if (existing) { toast('ID kategori sudah dipakai.', 'err'); return; }
+      await rSet(`category:${id}`, { name });
+      await rSadd('categories', id);
+    }
+    toast(editId ? 'Kategori diperbarui.' : 'Kategori ditambahkan.', 'ok');
+    closeCatModal();
+    await loadAll();
+  } catch { toast('Gagal menyimpan kategori.', 'err'); }
+}
+
+function confirmDeleteCat(id) {
+  const c = cats.find(x => x.id === id);
+  document.getElementById('confirmTitle').textContent = 'Hapus Kategori?';
+  document.getElementById('confirmDesc').textContent = `Kategori "${c?.name || id}" akan dihapus. Prompt yang terkait tidak ikut terhapus.`;
+  document.getElementById('confirmOkBtn').onclick = () => deleteCat(id);
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+async function deleteCat(id) {
+  try {
+    await rSrem('categories', id);
+    await rDel(`category:${id}`);
+    toast('Kategori dihapus.', 'ok');
+    closeConfirm();
+    await loadAll();
+  } catch { toast('Gagal menghapus.', 'err'); }
+}
+
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function changePassword() {
+  const oldP = document.getElementById('oldPass').value;
+  const newP = document.getElementById('newPass').value;
+  const confP = document.getElementById('confPass').value;
+  if (!oldP || !newP || !confP) { toast('Semua field harus diisi.', 'err'); return; }
+  if (newP !== confP) { toast('Konfirmasi password tidak cocok.', 'err'); return; }
+  if (newP.length < 6) { toast('Password minimal 6 karakter.', 'err'); return; }
+  try {
+    const stored = await rGet(`admin:user:${sessionUser}`);
+    if (!stored) { toast('User tidak ditemukan.', 'err'); return; }
+    const data = JSON.parse(stored);
+    if (data.password !== oldP) { toast('Password lama salah.', 'err'); return; }
+    data.password = newP;
+    await rSet(`admin:user:${sessionUser}`, data);
+    document.getElementById('oldPass').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('confPass').value = '';
+    toast('Password berhasil diubah.', 'ok');
+  } catch { toast('Gagal mengubah password.', 'err'); }
+}
+
+function toast(msg, type = 'info') {
+  const wrap = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<div class="toast-dot"></div><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('fadeOut'); setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closePromptModal(); closeCatModal(); closeConfirm();
+  }
+});
+
+[document.getElementById('promptOverlay'), document.getElementById('catOverlay'), document.getElementById('confirmOverlay')].forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) { closePromptModal(); closeCatModal(); closeConfirm(); } });
+});
+
+checkSession();
+</script>
+</body>
+</html>
