@@ -979,54 +979,7 @@ footer a:hover { color: var(--white); }
 </div>
 
 <script>
-let R_U = '', R_T = '';
 
-async function redis(cmd, ...args) {
-  const body = JSON.stringify([cmd, ...args]);
-  const res = await fetch(`${R_U}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${R_T}`,
-      'Content-Type': 'application/json'
-    },
-    body
-  });
-  const json = await res.json();
-  return json.result;
-}
-
-async function redisGet(key) {
-  const res = await fetch(`${R_U}/get/${encodeURIComponent(key)}`, {
-    headers: { 'Authorization': `Bearer ${R_T}` }
-  });
-  const j = await res.json();
-  return j.result;
-}
-
-async function redisMGet(keys) {
-  if (!keys.length) return [];
-  const res = await fetch(`${R_U}/mget/${keys.map(k => encodeURIComponent(k)).join('/')}`, {
-    headers: { 'Authorization': `Bearer ${R_T}` }
-  });
-  const j = await res.json();
-  return j.result;
-}
-
-async function redisSmembers(key) {
-  const res = await fetch(`${R_U}/smembers/${encodeURIComponent(key)}`, {
-    headers: { 'Authorization': `Bearer ${R_T}` }
-  });
-  const j = await res.json();
-  return j.result || [];
-}
-
-async function redisLrange(key, start, stop) {
-  const res = await fetch(`${R_U}/lrange/${encodeURIComponent(key)}/${start}/${stop}`, {
-    headers: { 'Authorization': `Bearer ${R_T}` }
-  });
-  const j = await res.json();
-  return j.result || [];
-}
 
 let cats = [];
 let prompts = [];
@@ -1059,35 +1012,16 @@ function escapeHtml(t) {
 
 async function init() {
   try {
-    const [catIds, promptIds] = await Promise.all([
-      redisSmembers('categories'),
-      redisLrange('prompts:list', 0, -1)
-    ]);
-
-    if (catIds.length) {
-      const catVals = await redisMGet(catIds.map(id => `category:${id}`));
-      cats = catIds.map((id, i) => {
-        try { return { id, ...JSON.parse(catVals[i] || '{}') }; }
-        catch { return { id, name: id }; }
-      }).filter(c => c.name);
-    }
-
-    if (promptIds.length) {
-      const promptVals = await redisMGet(promptIds.map(id => `prompt:${id}`));
-      prompts = promptIds.map((id, i) => {
-        try {
-          const p = JSON.parse(promptVals[i] || '{}');
-          p.id = id;
-          p.charCount = p.content ? p.content.length : 0;
-          p.lengthClass = getLengthClass(p.charCount);
-          p.categories = Array.isArray(p.category_ids)
-            ? cats.filter(c => p.category_ids.includes(c.id))
-            : [];
-          return p;
-        } catch { return null; }
-      }).filter(Boolean);
-    }
-
+    const { cats: c, prompts: p } = await fetch('/api/data').then(r => r.json());
+    cats = c || [];
+    prompts = (p || []).map(prompt => {
+      prompt.charCount = prompt.content ? prompt.content.length : 0;
+      prompt.lengthClass = getLengthClass(prompt.charCount);
+      prompt.categories = Array.isArray(prompt.category_ids)
+        ? cats.filter(c => prompt.category_ids.includes(c.id))
+        : [];
+      return prompt;
+    });
     document.getElementById('statP').textContent = prompts.length;
     document.getElementById('statC').textContent = cats.length;
     renderCats();
@@ -1404,18 +1338,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
 });
 
-async function bootstrap() {
-  try {
-    const cfg = await fetch('/api/config').then(r => r.json());
-    R_U = cfg.R_U;
-    R_T = cfg.R_T;
-  } catch {
-    showErr(); return;
-  }
-  init();
-}
-
-bootstrap();
+init();
 </script>
 </body>
 </html>

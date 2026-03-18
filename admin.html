@@ -876,38 +876,34 @@ tr:hover td { background: var(--bg-elevated); }
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-let R_U = '', R_T = '';
-
-async function rFetch(path, method = 'GET', body = null) {
-  const opts = {
-    method: body ? 'POST' : method,
-    headers: { 'Authorization': `Bearer ${R_T}`, 'Content-Type': 'application/json' }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(`${R_U}${path}`, opts);
-  const j = await res.json();
-  return j.result;
-}
-
-const rGet = key => rFetch(`/get/${encodeURIComponent(key)}`);
-const rSet = (key, val) => rFetch('', 'POST', ['SET', key, typeof val === 'string' ? val : JSON.stringify(val)]);
-const rDel = key => rFetch('', 'POST', ['DEL', key]);
-const rSadd = (key, ...members) => rFetch('', 'POST', ['SADD', key, ...members]);
-const rSrem = (key, ...members) => rFetch('', 'POST', ['SREM', key, ...members]);
-const rSmembers = key => rFetch(`/smembers/${encodeURIComponent(key)}`);
-const rRpush = (key, ...vals) => rFetch('', 'POST', ['RPUSH', key, ...vals]);
-const rLrange = (key, s, e) => rFetch(`/lrange/${encodeURIComponent(key)}/${s}/${e}`);
-const rLrem = (key, count, val) => rFetch('', 'POST', ['LREM', key, count, val]);
-async function rMGet(keys) {
-  if (!keys.length) return [];
-  return rFetch(`/mget/${keys.map(k => encodeURIComponent(k)).join('/')}`);
-}
-
-
-
 let cats = [];
 let prompts = [];
 let sessionUser = null;
+
+async function api(path, body = null) {
+  const opts = { headers: { 'Content-Type': 'application/json' } };
+  if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+  const res = await fetch(path, opts);
+  return res.json();
+}
+
+async function apiPut(path, body) {
+  const res = await fetch(path, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+async function apiDelete(path, body) {
+  const res = await fetch(path, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
 
 async function doLogin() {
   const user = document.getElementById('loginUser').value.trim();
@@ -918,10 +914,8 @@ async function doLogin() {
   btn.disabled = true; btn.textContent = 'Memeriksa...';
   err.classList.remove('show');
   try {
-    const stored = await rGet(`admin:user:${user}`);
-    if (!stored) { throw new Error('not found'); }
-    const data = JSON.parse(stored);
-    if (data.password !== pass) throw new Error('wrong');
+    const res = await api('/api/admin/login', { username: user, password: pass });
+    if (!res.ok) throw new Error('wrong');
     sessionUser = user;
     sessionStorage.setItem('bp_admin', user);
     document.getElementById('loginScreen').style.display = 'none';
@@ -948,48 +942,24 @@ function doLogout() {
 async function checkSession() {
   const u = sessionStorage.getItem('bp_admin');
   if (!u) return;
-  try {
-    const stored = await rGet(`admin:user:${u}`);
-    if (!stored) return;
-    sessionUser = u;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').classList.add('show');
-    await loadAll();
-  } catch {}
+  sessionUser = u;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  await loadAll();
 }
 
 async function loadAll() {
   try {
-    const [catIds, promptIds] = await Promise.all([
-      rSmembers('categories'),
-      rLrange('prompts:list', 0, -1)
-    ]);
-
-    const catIds_ = catIds || [];
-    const promptIds_ = promptIds || [];
-
-    if (catIds_.length) {
-      const vals = await rMGet(catIds_.map(id => `category:${id}`));
-      cats = catIds_.map((id, i) => {
-        try { return { id, ...JSON.parse(vals[i] || '{}') }; } catch { return { id, name: id }; }
-      }).filter(c => c.name);
-    } else { cats = []; }
-
-    if (promptIds_.length) {
-      const vals = await rMGet(promptIds_.map(id => `prompt:${id}`));
-      prompts = promptIds_.map((id, i) => {
-        try {
-          const p = JSON.parse(vals[i] || '{}');
-          p.id = id;
-          p.charCount = p.content ? p.content.length : 0;
-          p.lengthClass = getLenClass(p.charCount);
-          p.categories = Array.isArray(p.category_ids)
-            ? cats.filter(c => p.category_ids.includes(c.id))
-            : [];
-          return p;
-        } catch { return null; }
-      }).filter(Boolean);
-    } else { prompts = []; }
+    const { cats: c, prompts: p } = await api('/api/data');
+    cats = c || [];
+    prompts = (p || []).map(prompt => {
+      prompt.charCount = prompt.content ? prompt.content.length : 0;
+      prompt.lengthClass = getLenClass(prompt.charCount);
+      prompt.categories = Array.isArray(prompt.category_ids)
+        ? cats.filter(c => prompt.category_ids.includes(c.id))
+        : [];
+      return prompt;
+    });
 
     document.getElementById('tabPromptCount').textContent = prompts.length;
     document.getElementById('tabCatCount').textContent = cats.length;
@@ -1185,18 +1155,17 @@ async function savePrompt() {
   const desc = document.getElementById('fDesc').value.trim();
   const content = document.getElementById('fContent').value.trim();
   const category_ids = getSelectedCats();
-
   if (!title || !content) { toast('Judul dan isi prompt wajib diisi.', 'err'); return; }
-
   const isEdit = !!id;
-  const promptId = isEdit ? id : 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
   const created_at = isEdit ? (prompts.find(p => p.id === id)?.created_at || new Date().toISOString()) : new Date().toISOString();
-
-  const data = { title, description: desc, content, category_ids, created_at };
-
   try {
-    await rSet(`prompt:${promptId}`, data);
-    if (!isEdit) await rRpush('prompts:list', promptId);
+    let res;
+    if (isEdit) {
+      res = await apiPut('/api/admin/prompt', { id, title, description: desc, content, category_ids, created_at });
+    } else {
+      res = await api('/api/admin/prompt', { title, description: desc, content, category_ids });
+    }
+    if (!res.ok) throw new Error();
     toast(isEdit ? 'Prompt berhasil diperbarui.' : 'Prompt berhasil ditambahkan.', 'ok');
     closePromptModal();
     await loadAll();
@@ -1214,7 +1183,8 @@ function confirmDeletePrompt(id) {
 
 async function deletePrompt(id) {
   try {
-    await Promise.all([rDel(`prompt:${id}`), rLrem('prompts:list', 0, id)]);
+    const res = await apiDelete('/api/admin/prompt', { id });
+    if (!res.ok) throw new Error();
     toast('Prompt dihapus.', 'ok');
     closeConfirm();
     await loadAll();
@@ -1260,27 +1230,15 @@ async function saveCat() {
   const name = document.getElementById('fCatName').value.trim();
   const id = document.getElementById('fCatId').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   if (!name || !id) { toast('Nama dan ID kategori wajib diisi.', 'err'); return; }
-
   try {
+    let res;
     if (editId) {
-      if (editId !== id) {
-        await rSrem('categories', editId);
-        await rDel(`category:${editId}`);
-        const updated = prompts.filter(p => (p.category_ids || []).includes(editId));
-        for (const p of updated) {
-          const newIds = p.category_ids.map(cid => cid === editId ? id : cid);
-          const d = { title: p.title, description: p.description, content: p.content, category_ids: newIds, created_at: p.created_at };
-          await rSet(`prompt:${p.id}`, d);
-        }
-      }
-      await rSet(`category:${id}`, { name });
-      await rSadd('categories', id);
+      res = await apiPut('/api/admin/category', { oldId: editId, id, name });
     } else {
-      const existing = await rGet(`category:${id}`);
-      if (existing) { toast('ID kategori sudah dipakai.', 'err'); return; }
-      await rSet(`category:${id}`, { name });
-      await rSadd('categories', id);
+      res = await api('/api/admin/category', { id, name });
     }
+    if (res.error === 'ID already exists') { toast('ID kategori sudah dipakai.', 'err'); return; }
+    if (!res.ok) throw new Error();
     toast(editId ? 'Kategori diperbarui.' : 'Kategori ditambahkan.', 'ok');
     closeCatModal();
     await loadAll();
@@ -1298,8 +1256,8 @@ function confirmDeleteCat(id) {
 
 async function deleteCat(id) {
   try {
-    await rSrem('categories', id);
-    await rDel(`category:${id}`);
+    const res = await apiDelete('/api/admin/category', { id });
+    if (!res.ok) throw new Error();
     toast('Kategori dihapus.', 'ok');
     closeConfirm();
     await loadAll();
@@ -1319,12 +1277,8 @@ async function changePassword() {
   if (newP !== confP) { toast('Konfirmasi password tidak cocok.', 'err'); return; }
   if (newP.length < 6) { toast('Password minimal 6 karakter.', 'err'); return; }
   try {
-    const stored = await rGet(`admin:user:${sessionUser}`);
-    if (!stored) { toast('User tidak ditemukan.', 'err'); return; }
-    const data = JSON.parse(stored);
-    if (data.password !== oldP) { toast('Password lama salah.', 'err'); return; }
-    data.password = newP;
-    await rSet(`admin:user:${sessionUser}`, data);
+    const res = await api('/api/admin/password', { username: sessionUser, oldPassword: oldP, newPassword: newP });
+    if (!res.ok) { toast(res.error === 'Wrong password' ? 'Password lama salah.' : 'Gagal.', 'err'); return; }
     document.getElementById('oldPass').value = '';
     document.getElementById('newPass').value = '';
     document.getElementById('confPass').value = '';
@@ -1342,29 +1296,14 @@ function toast(msg, type = 'info') {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closePromptModal(); closeCatModal(); closeConfirm();
-  }
+  if (e.key === 'Escape') { closePromptModal(); closeCatModal(); closeConfirm(); }
 });
 
 [document.getElementById('promptOverlay'), document.getElementById('catOverlay'), document.getElementById('confirmOverlay')].forEach(el => {
   el.addEventListener('click', e => { if (e.target === el) { closePromptModal(); closeCatModal(); closeConfirm(); } });
 });
 
-async function bootstrap() {
-  try {
-    const cfg = await fetch('/api/config').then(r => r.json());
-    R_U = cfg.R_U;
-    R_T = cfg.R_T;
-  } catch {
-    document.getElementById('loginErr').textContent = 'Gagal memuat konfigurasi server.';
-    document.getElementById('loginErr').classList.add('show');
-    return;
-  }
-  checkSession();
-}
-
-bootstrap();
+checkSession();
 </script>
 </body>
 </html>
