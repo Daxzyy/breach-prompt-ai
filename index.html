@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>Breach Prompt</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breach Prompt — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -18,22 +18,19 @@
   --text-muted: #888;
   --text-subtle: #555;
   --white: #f5f5f5;
-
-  --clr-short: #86efac;
-  --clr-short-bg: rgba(134,239,172,0.06);
-  --clr-medium: #fcd34d;
-  --clr-medium-bg: rgba(252,211,77,0.06);
-  --clr-long: #fca5a5;
-  --clr-long-bg: rgba(252,165,165,0.06);
-  --clr-new: #d4d4d4;
-  --clr-new-bg: rgba(212,212,212,0.07);
-
+  --red: #fca5a5;
+  --red-dim: rgba(252,165,165,0.07);
+  --green: #86efac;
+  --green-dim: rgba(134,239,172,0.07);
+  --blue: #93c5fd;
+  --blue-dim: rgba(147,197,253,0.07);
+  --yellow: #fcd34d;
   --grid-size: 48px;
-  --grid-color: rgba(255,255,255,0.028);
+  --grid-color: rgba(255,255,255,0.025);
   --radius: 5px;
   --radius-md: 8px;
   --font: 'Ubuntu Mono', monospace;
-  --transition: all 0.18s ease;
+  --transition: all 0.16s ease;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,26 +38,87 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
+  background: var(--bg); color: var(--text);
   min-height: 100vh;
-  line-height: 1.6;
   background-image:
     linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: var(--grid-size) var(--grid-size);
 }
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+/* ─── LOGIN ─── */
+.login-screen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+
+.login-box {
+  background: var(--bg-card); border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md); width: 100%; max-width: 380px; overflow: hidden;
+}
+
+.login-top {
+  background: var(--bg); padding: 2rem;
+  text-align: center; border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.login-top::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.login-logo {
+  position: relative; z-index: 1;
+  font-size: 1.25rem; font-weight: 700; color: var(--white); letter-spacing: 0.04em;
+}
+.login-logo span { color: var(--text-subtle); font-weight: 400; }
+.login-sub { position: relative; z-index: 1; font-size: 0.62rem; color: var(--text-subtle); margin-top: 0.3rem; letter-spacing: 0.1em; }
+
+.login-form { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.9rem; }
+
+.field-label { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-subtle); margin-bottom: 0.35rem; }
+
+.field-input {
+  width: 100%; padding: 0.7rem 0.9rem;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-family: var(--font); font-size: 0.85rem; outline: none; transition: var(--transition);
+  min-height: 42px;
+}
+.field-input:focus { border-color: var(--border-active); background: var(--bg-elevated); }
+
+.btn-login {
+  width: 100%; padding: 0.85rem;
+  background: var(--bg-elevated); border: 1px solid var(--border-active);
+  border-radius: var(--radius-md); color: var(--white);
+  font-family: var(--font); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition); margin-top: 0.25rem;
+}
+.btn-login:hover { background: var(--bg-hover); border-color: var(--white); }
+.btn-login:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.login-err {
+  font-size: 0.72rem; color: var(--red);
+  background: var(--red-dim); border: 1px solid rgba(252,165,165,0.18);
+  border-radius: var(--radius); padding: 0.5rem 0.75rem; display: none;
+}
+.login-err.show { display: block; }
+
+/* ─── APP ─── */
+.app { display: none; flex-direction: column; min-height: 100vh; }
+.app.show { display: flex; }
 
 header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(20,20,20,0.92);
-  backdrop-filter: blur(16px) saturate(130%);
-  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  background: rgba(20,20,20,0.92); backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -72,1127 +130,1039 @@ header {
 @media (min-width: 640px) { .hdr { padding: 0 2rem; height: 62px; } }
 
 .logo {
-  display: flex; align-items: center; gap: 0.55rem;
+  display: flex; align-items: center; gap: 0.4rem;
   text-decoration: none; color: var(--text);
-  font-family: var(--font); font-weight: 700;
-  font-size: 1rem; letter-spacing: 0.03em;
+  font-weight: 700; font-size: 1rem; letter-spacing: 0.03em;
 }
-@media (min-width: 640px) { .logo { font-size: 1.15rem; } }
 
 .logo-mark {
-  width: 30px; height: 30px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-hover);
+  width: 28px; height: 28px;
+  background: var(--bg-elevated); border: 1px solid var(--border-hover);
   border-radius: var(--radius);
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
 }
-.logo-mark svg { width: 15px; height: 15px; color: var(--text-muted); }
+.logo-mark svg { width: 14px; height: 14px; color: var(--text-muted); }
+.logo em { font-style: normal; color: var(--white); }
+.logo-text { color: var(--text); }
 .logo-text em { font-style: normal; color: var(--white); }
 
 .hdr-right { display: flex; align-items: center; gap: 0.5rem; }
 
-.btn-admin {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  padding: 0.4rem 0.9rem;
-  font-family: var(--font); font-size: 0.72rem; font-weight: 700;
+.admin-badge {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-subtle); border: 1px solid var(--border);
+  padding: 0.2rem 0.5rem; border-radius: 3px;
+}
+
+.btn-sm {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  font-family: var(--font); font-size: 0.7rem; font-weight: 700;
   letter-spacing: 0.05em; text-transform: uppercase;
-  background: transparent;
-  border: 1px solid var(--border-hover);
-  border-radius: var(--radius);
-  color: var(--text-muted);
-  cursor: pointer; text-decoration: none;
-  transition: var(--transition);
-  white-space: nowrap;
+  border-radius: var(--radius); cursor: pointer; transition: var(--transition);
+  text-decoration: none; white-space: nowrap; min-height: 34px;
 }
-.btn-admin:hover { border-color: var(--border-active); color: var(--text); }
 
-/* ─── HERO ─── */
-.hero {
-  max-width: 1440px; margin: 0 auto;
-  padding: 2.5rem 1.25rem 1.75rem;
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+.btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+
+.btn-white { background: var(--bg-elevated); border: 1px solid var(--border-active); color: var(--white); }
+.btn-white:hover { background: var(--bg-hover); border-color: var(--white); }
+
+.btn-danger { background: transparent; border: 1px solid rgba(252,165,165,0.2); color: var(--red); }
+.btn-danger:hover { background: var(--red-dim); border-color: rgba(252,165,165,0.4); }
+
+/* ─── MAIN ─── */
+.main { max-width: 1440px; margin: 0 auto; padding: 1.25rem; flex: 1; }
+@media (min-width: 640px) { .main { padding: 1.5rem 2rem; } }
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex; border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem; overflow-x: auto;
+  scrollbar-width: none; gap: 0;
 }
-@media (min-width: 640px) { .hero { padding: 4rem 2rem 3rem; } }
+.tabs::-webkit-scrollbar { display: none; }
 
-.hero-eyebrow {
+.tab-btn {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  font-size: 0.65rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--text-subtle);
-  margin-bottom: 1rem;
-  border: 1px solid var(--border);
-  padding: 0.3rem 0.65rem;
-  border-radius: var(--radius);
-  background: var(--bg-card);
+  padding: 0.65rem 1rem; white-space: nowrap;
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  color: var(--text-muted); font-family: var(--font);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition); margin-bottom: -1px;
 }
-.hero-eyebrow span { color: var(--text-muted); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--white); border-bottom-color: var(--border-active); }
 
-.hero h1 {
-  font-family: var(--font);
-  font-size: clamp(1.9rem, 8vw, 4.5rem);
-  font-weight: 700; line-height: 1.08;
-  letter-spacing: -0.02em;
-  color: var(--white);
-  margin-bottom: 1rem;
+.tab-count {
+  background: var(--bg-hover); border: 1px solid var(--border);
+  color: var(--text-subtle); font-size: 0.6rem;
+  padding: 0.1rem 0.35rem; border-radius: 3px;
 }
-.hero h1 .dim { color: var(--text-muted); font-weight: 400; }
 
-.hero-sub {
-  font-size: 0.875rem; color: var(--text-muted);
-  max-width: 420px; margin-bottom: 1.75rem; line-height: 1.7;
+/* ─── PANELS ─── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ─── STATS ─── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  overflow: hidden; margin-bottom: 1.5rem;
 }
-@media (min-width: 640px) { .hero-sub { font-size: 0.95rem; } }
+@media (min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
 
-.search-wrap { max-width: 520px; }
+.stat-card { background: var(--bg-card); padding: 1.1rem 1.25rem; }
+@media (min-width: 640px) { .stat-card { padding: 1.25rem 1.5rem; } }
 
-.search-box {
-  display: flex; align-items: center; gap: 0.6rem;
-  padding: 0.75rem 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  transition: var(--transition);
+.stat-card-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-subtle); margin-bottom: 0.4rem; }
+.stat-card-val { font-size: 1.75rem; font-weight: 700; color: var(--white); line-height: 1; }
+@media (min-width: 640px) { .stat-card-val { font-size: 2rem; } }
+.stat-card-sub { font-size: 0.65rem; color: var(--text-subtle); margin-top: 0.2rem; }
+
+.charts-row { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+@media (min-width: 768px) { .charts-row { grid-template-columns: 1fr 1fr; } }
+
+.chart-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; }
+.chart-title { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-subtle); margin-bottom: 1rem; }
+
+.bar-list { display: flex; flex-direction: column; gap: 0.65rem; }
+.bar-item { display: flex; flex-direction: column; gap: 0.3rem; }
+.bar-label-row { display: flex; justify-content: space-between; align-items: center; }
+.bar-name { font-size: 0.75rem; color: var(--text-muted); }
+.bar-val { font-size: 0.7rem; font-weight: 700; color: var(--text-subtle); }
+.bar-track { height: 3px; background: var(--bg-hover); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--border-active); border-radius: 2px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+
+.len-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.len-item { display: flex; align-items: center; gap: 0.75rem; }
+.len-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.len-label { font-size: 0.75rem; color: var(--text-muted); flex: 1; }
+.len-val { font-size: 0.75rem; font-weight: 700; color: var(--text-subtle); }
+
+/* ─── SECTION HDR ─── */
+.section-hdr {
+  display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-start;
+  margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
 }
-@media (min-width: 640px) { .search-box { padding: 0.875rem 1.25rem; } }
+@media (min-width: 640px) { .section-hdr { flex-direction: row; align-items: center; justify-content: space-between; } }
 
-.search-box:focus-within { border-color: var(--border-active); background: var(--bg-elevated); }
+.section-title {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text);
+  display: flex; align-items: center; gap: 0.5rem;
+}
 
-.search-box input {
+/* ─── SEARCH BAR ─── */
+.search-bar {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.85rem; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  max-width: 300px; width: 100%; min-height: 38px;
+}
+.search-bar:focus-within { border-color: var(--border-active); }
+.search-bar input {
   flex: 1; border: none; background: transparent;
-  color: var(--text); font-family: var(--font); font-size: 0.875rem; outline: none;
+  color: var(--text); font-family: var(--font); font-size: 0.78rem; outline: none;
 }
-.search-box input::placeholder { color: var(--text-subtle); }
-.search-icon { color: var(--text-subtle); flex-shrink: 0; }
+.search-bar input::placeholder { color: var(--text-subtle); }
 
-.stats-row { display: flex; gap: 2rem; margin-top: 1.75rem; flex-wrap: wrap; }
+/* ─── TABLE ─── */
+.table-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.table-inner { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-.stat-n {
-  font-family: var(--font); font-size: 1.75rem; font-weight: 700;
-  color: var(--white); line-height: 1;
-}
-@media (min-width: 640px) { .stat-n { font-size: 2.25rem; } }
+table { width: 100%; border-collapse: collapse; min-width: 480px; }
 
-.stat-l {
-  font-size: 0.68rem; color: var(--text-subtle);
-  letter-spacing: 0.07em; text-transform: uppercase; margin-top: 0.25rem;
-}
-
-/* ─── LAYOUT ─── */
-.main {
-  max-width: 1440px; margin: 0 auto;
-  padding: 1.25rem 1.25rem 3rem;
-  display: flex; flex-direction: column; gap: 1.25rem;
-}
-@media (min-width: 1024px) {
-  .main { padding: 1.75rem 2rem 5rem; flex-direction: row; gap: 2rem; }
+thead tr { border-bottom: 1px solid var(--border); }
+th {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-subtle);
+  padding: 0.75rem 1rem; text-align: left;
+  background: var(--bg); white-space: nowrap;
 }
 
-/* ─── SIDEBAR / KATEGORI ─── */
-.sidebar { width: 100%; flex-shrink: 0; }
-@media (min-width: 1024px) { .sidebar { width: 200px; } }
-
-.sidebar-label {
-  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.1em; color: var(--text-subtle); margin-bottom: 0.5rem;
-}
-
-.cat-list {
-  display: flex; flex-direction: row; gap: 0.375rem;
-  overflow-x: auto; padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.cat-list::-webkit-scrollbar { display: none; }
-@media (min-width: 1024px) { .cat-list { flex-direction: column; gap: 0.2rem; overflow-x: visible; padding-bottom: 0; } }
-
-.cat-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.55rem 0.875rem;
-  border-radius: var(--radius);
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--text-muted);
-  font-family: var(--font); font-size: 0.82rem;
-  cursor: pointer; transition: var(--transition);
-  text-align: left; white-space: nowrap; flex-shrink: 0;
-  min-height: 40px;
-}
-@media (min-width: 1024px) { .cat-item { white-space: normal; font-size: 0.85rem; flex-shrink: 1; } }
-
-.cat-item:hover { background: var(--bg-elevated); color: var(--text); border-color: var(--border); }
-.cat-item.active { background: var(--bg-elevated); color: var(--white); border-color: var(--border-active); }
-
-.cat-item-left { display: flex; align-items: center; gap: 0.4rem; }
-
-.cat-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--text-subtle); flex-shrink: 0; transition: var(--transition);
-}
-.cat-item.active .cat-dot { background: var(--white); }
-
-.cat-count {
-  font-size: 0.62rem; font-weight: 700; color: var(--text-subtle);
-  padding: 0.1rem 0.35rem; border-radius: 3px; background: var(--bg-hover);
-  margin-left: 0.25rem;
-}
-.cat-item.active .cat-count { color: var(--text-muted); }
-
-/* ─── CONTENT ─── */
-.content { flex: 1; min-width: 0; }
-
-.content-header {
-  display: flex; flex-direction: column; gap: 0.75rem;
-  align-items: flex-start;
-  margin-bottom: 1rem; padding-bottom: 0.75rem;
+td {
+  padding: 0.9rem 1rem; font-size: 0.8rem;
+  color: var(--text-muted); vertical-align: top;
   border-bottom: 1px solid var(--border);
 }
-@media (min-width: 640px) {
-  .content-header { flex-direction: row; align-items: center; justify-content: space-between; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg-elevated); }
+
+.td-title { color: var(--text); font-weight: 700; max-width: 200px; }
+.td-cat { white-space: nowrap; }
+
+.pill {
+  display: inline-block; padding: 0.18rem 0.45rem;
+  border: 1px solid var(--border); border-radius: 3px;
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-subtle);
+  background: var(--bg-elevated); white-space: nowrap;
 }
+.pill.short  { color: #86efac; border-color: rgba(134,239,172,0.2); background: rgba(134,239,172,0.05); }
+.pill.medium { color: #fcd34d; border-color: rgba(252,211,77,0.2);  background: rgba(252,211,77,0.05); }
+.pill.long   { color: #fca5a5; border-color: rgba(252,165,165,0.2); background: rgba(252,165,165,0.05); }
 
-.content-title {
-  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em;
-  display: flex; align-items: center; gap: 0.5rem; color: var(--text);
-}
+.actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
 
-.content-count {
-  font-size: 0.67rem; color: var(--text-subtle);
-  background: var(--bg-elevated); padding: 0.15rem 0.5rem;
-  border-radius: 3px; border: 1px solid var(--border);
-}
-
-.filter-group { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-
-.sort-select, .length-select {
-  padding: 0.45rem 0.7rem;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--text-muted);
-  font-family: var(--font); font-size: 0.75rem;
-  font-weight: 700; cursor: pointer; outline: none;
-  transition: var(--transition); letter-spacing: 0.03em;
-  min-height: 36px;
-}
-.sort-select:hover, .length-select:hover { border-color: var(--border-hover); color: var(--text); }
-.sort-select option, .length-select option { background: #1a1a1a; }
-
-/* ─── GRID ─── */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-}
-
-/* ─── CARD ─── */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 1.1rem 1.1rem 1rem;
-  cursor: pointer; transition: var(--transition);
-  position: relative; overflow: hidden;
-  display: flex; flex-direction: column;
-  animation: fadeUp 0.22s ease both;
-}
-@media (min-width: 640px) { .card { padding: 1.25rem; } }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.card:hover { background: var(--bg-elevated); border-color: var(--border-hover); transform: translateY(-2px); }
-
-.card-stripe {
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--border-active), transparent);
-  opacity: 0; transition: opacity 0.2s;
-}
-.card:hover .card-stripe { opacity: 1; }
-
-.card-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 0.55rem; gap: 0.4rem; flex-wrap: wrap;
-}
-
-.card-cat {
-  display: inline-flex; align-items: center;
-  font-size: 0.6rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  padding: 0.22rem 0.5rem;
-  border-radius: 3px; border: 1px solid var(--border);
-  color: var(--text-subtle); background: var(--bg-elevated);
-}
-
-.new-badge {
-  display: inline-flex; align-items: center;
-  padding: 0.18rem 0.45rem;
-  background: var(--clr-new-bg); color: var(--clr-new);
-  border: 1px solid rgba(212,212,212,0.15);
-  font-size: 0.55rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  border-radius: 3px;
-  animation: blinkFade 2.5s ease-in-out infinite;
-}
-@keyframes blinkFade { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
-
-.card-title {
-  font-size: 0.9rem; font-weight: 700;
-  color: var(--text); margin-bottom: 0.3rem; line-height: 1.35;
-}
-@media (min-width: 640px) { .card-title { font-size: 0.95rem; } }
-
-.card-description {
-  font-size: 0.75rem; color: var(--text-muted);
-  margin-bottom: 0.45rem; line-height: 1.5;
-}
-
-.card-preview {
-  font-size: 0.73rem; color: var(--text-subtle);
-  display: -webkit-box; -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; overflow: hidden; flex: 1;
-  line-height: 1.6;
-}
-
-.card-stats {
-  display: flex; align-items: center; gap: 0.4rem;
-  margin-top: 0.7rem; padding-top: 0.7rem;
-  border-top: 1px solid var(--border); flex-wrap: wrap;
-}
-
-.char-pill {
-  display: inline-flex; align-items: center;
-  font-size: 0.63rem; font-weight: 700; letter-spacing: 0.03em;
-  padding: 0.22rem 0.5rem; border-radius: 3px;
-  border: 1px solid var(--border);
-  background: var(--bg-elevated); color: var(--text-subtle);
-}
-.char-pill.short  { color: var(--clr-short);  background: var(--clr-short-bg);  border-color: rgba(134,239,172,0.14); }
-.char-pill.medium { color: var(--clr-medium); background: var(--clr-medium-bg); border-color: rgba(252,211,77,0.14); }
-.char-pill.long   { color: var(--clr-long);   background: var(--clr-long-bg);   border-color: rgba(252,165,165,0.14); }
-
-.card-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 0.7rem;
-}
-
-.copy-btn {
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  padding: 0.45rem 0.875rem;
-  background: transparent; border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--text-muted);
-  font-family: var(--font); font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.04em; text-transform: uppercase;
-  cursor: pointer; transition: var(--transition);
-  min-height: 34px;
-}
-.copy-btn:hover { background: var(--bg-elevated); border-color: var(--border-active); color: var(--text); }
-.copy-btn.ok { border-color: rgba(134,239,172,0.3); color: var(--clr-short); background: var(--clr-short-bg); }
-
-.card-date { font-size: 0.65rem; color: var(--text-subtle); }
-
-/* ─── EMPTY / LOADER ─── */
-.empty {
-  grid-column: 1/-1; text-align: center;
-  padding: 4rem 1rem; color: var(--text-subtle);
-}
-.empty-icon { width: 40px; height: 40px; margin: 0 auto 1rem; color: var(--border-hover); }
-.empty h3 { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.4rem; }
-.empty p { font-size: 0.78rem; line-height: 1.7; max-width: 340px; margin: 0 auto; }
-
-.loader {
-  display: flex; justify-content: center; align-items: center;
-  min-height: 240px; width: 100%;
-}
-
-.cat-loader {
-  display: flex; justify-content: center; align-items: center;
-  padding: 1rem; width: 100%;
-}
-
-.spinner {
-  width: 26px; height: 26px;
-  border: 2px solid var(--border);
-  border-top-color: var(--text-muted);
-  border-radius: 50%;
-  animation: spin 0.75s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ─── PAGINATION ─── */
-.pagination {
-  display: flex; justify-content: center; align-items: center; gap: 0.35rem;
-  margin-top: 2.5rem; flex-wrap: wrap;
-}
-
-.page-btn {
-  min-width: 38px; height: 38px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0 0.65rem;
-  border-radius: var(--radius); border: 1px solid var(--border);
-  background: var(--bg-card); color: var(--text-muted);
-  font-family: var(--font); font-size: 0.8rem; font-weight: 700;
-  cursor: pointer; transition: var(--transition);
-}
-.page-btn:hover:not(:disabled) { border-color: var(--border-hover); color: var(--text); }
-.page-btn.active { background: var(--bg-elevated); border-color: var(--border-active); color: var(--white); }
-.page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.table-empty { text-align: center; padding: 3rem; color: var(--text-subtle); font-size: 0.8rem; }
 
 /* ─── MODAL ─── */
 .overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.72);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  z-index: 200;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(6px); z-index: 200;
   display: flex; align-items: center; justify-content: center;
   padding: 1rem; opacity: 0; pointer-events: none;
-  transition: opacity 0.22s ease;
+  transition: opacity 0.2s ease;
 }
 .overlay.open { opacity: 1; pointer-events: all; }
 
 .modal {
   background: var(--bg-card); border: 1px solid var(--border-hover);
-  border-radius: var(--radius-md);
-  width: 100%; max-width: 660px; max-height: 90vh;
+  border-radius: var(--radius-md); width: 100%; max-width: 600px; max-height: 90vh;
   overflow-y: auto;
   transform: scale(0.96) translateY(14px);
-  transition: transform 0.26s cubic-bezier(0.34,1.4,0.64,1);
+  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1);
 }
 .overlay.open .modal { transform: scale(1) translateY(0); }
 
-.modal-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  padding: 1.25rem 1.25rem 0; gap: 1rem;
+.modal-hdr {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
 }
-@media (min-width: 640px) { .modal-header { padding: 1.5rem 1.5rem 0; } }
-
-.modal-cat {
-  display: inline-flex; align-items: center;
-  font-size: 0.6rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  padding: 0.22rem 0.55rem; border-radius: 3px;
-  border: 1px solid var(--border); color: var(--text-subtle);
-  background: var(--bg-elevated); margin-bottom: 0.55rem;
-}
-
-.modal-title {
-  font-size: 1.15rem; font-weight: 700; line-height: 1.25;
-  color: var(--text); margin-bottom: 0.45rem;
-}
-@media (min-width: 640px) { .modal-title { font-size: 1.3rem; } }
-
-.modal-description { font-size: 0.8rem; color: var(--text-muted); }
-
-.modal-stats {
-  display: flex; align-items: center; gap: 1.25rem;
-  padding: 0.7rem 0; flex-wrap: wrap;
-  border-top: 1px solid var(--border); margin-top: 0.7rem;
-}
-
-.stat-item { display: flex; flex-direction: column; gap: 0.12rem; }
-.stat-label { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-subtle); font-weight: 700; }
-.stat-value { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+.modal-hdr-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
 
 .close-btn {
-  width: 30px; height: 30px; border-radius: var(--radius);
-  border: 1px solid var(--border); background: transparent;
-  color: var(--text-muted); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: var(--transition); flex-shrink: 0;
 }
 .close-btn:hover { border-color: var(--border-hover); color: var(--text); }
 
-.modal-body { padding: 1rem 1.25rem; }
-@media (min-width: 640px) { .modal-body { padding: 1rem 1.5rem; } }
+.modal-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
 
-.prompt-content {
-  background: var(--bg);
-  border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 1rem;
-  font-size: 0.8rem; line-height: 1.75; color: var(--text-muted);
-  white-space: pre-wrap; word-break: break-word;
-  max-height: 300px; overflow-y: auto;
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.field-hint { font-size: 0.63rem; color: var(--text-subtle); }
+
+.field-input, .field-textarea, .field-select {
+  width: 100%; padding: 0.7rem 0.9rem;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-family: var(--font); font-size: 0.82rem; outline: none; transition: var(--transition);
+  min-height: 42px;
 }
-@media (min-width: 640px) { .prompt-content { font-size: 0.82rem; } }
+.field-input:focus, .field-textarea:focus, .field-select:focus { border-color: var(--border-active); background: var(--bg-elevated); }
+.field-textarea { resize: vertical; min-height: 160px; line-height: 1.6; }
+.field-select option { background: #1a1a1a; }
 
-.modal-footer { padding: 0 1.25rem 1.25rem; }
-@media (min-width: 640px) { .modal-footer { padding: 0 1.5rem 1.5rem; } }
+.cat-checkboxes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
-.modal-copy {
-  width: 100%; padding: 0.85rem;
-  background: var(--bg-elevated); border: 1px solid var(--border-hover);
-  border-radius: var(--radius-md); color: var(--text);
-  font-family: var(--font); font-size: 0.78rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer; transition: var(--transition);
-  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+.cat-check-label {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.32rem 0.65rem; border: 1px solid var(--border); border-radius: 3px;
+  font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+  cursor: pointer; transition: var(--transition); user-select: none; min-height: 32px;
 }
-.modal-copy:hover { border-color: var(--border-active); color: var(--white); }
-.modal-copy.ok { border-color: rgba(134,239,172,0.3); color: var(--clr-short); background: var(--clr-short-bg); }
+.cat-check-label:hover { border-color: var(--border-hover); color: var(--text); }
+.cat-check-label input { display: none; }
+.cat-check-label.checked { background: var(--bg-elevated); border-color: var(--border-active); color: var(--white); }
 
-/* ─── FOOTER ─── */
-footer {
-  text-align: center; padding: 1.5rem;
-  border-top: 1px solid var(--border);
-  color: var(--text-subtle); font-size: 0.7rem; letter-spacing: 0.04em;
-}
-footer a { color: var(--text-muted); text-decoration: none; transition: var(--transition); }
-footer a:hover { color: var(--white); }
-
-/* ─── WELCOME MODAL ─── */
-.welcome-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.88);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  z-index: 1000; display: flex; align-items: center; justify-content: center;
-  padding: 1rem; opacity: 0; pointer-events: none;
-  transition: opacity 0.35s ease;
-}
-.welcome-overlay.show { opacity: 1; pointer-events: all; }
-
-.welcome-modal {
-  background: var(--bg-card); border: 1px solid var(--border-hover);
-  border-radius: var(--radius-md); width: 100%; max-width: 400px;
-  overflow: hidden; transform: translateY(20px);
-  transition: transform 0.45s cubic-bezier(0.34,1.4,0.64,1);
-  position: relative;
-}
-.welcome-overlay.show .welcome-modal { transform: translateY(0); }
-
-.welcome-top {
-  background: var(--bg); padding: 2.25rem 2rem;
-  text-align: center; border-bottom: 1px solid var(--border);
-  position: relative; overflow: hidden;
-}
-.welcome-top::before {
-  content: ''; position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-  background-size: 24px 24px;
+.modal-footer {
+  padding: 1rem 1.5rem 1.25rem; border-top: 1px solid var(--border);
+  display: flex; gap: 0.5rem; justify-content: flex-end;
 }
 
-.welcome-logo {
-  position: relative; z-index: 1;
-  font-size: 1.75rem; font-weight: 700;
-  color: var(--white); letter-spacing: 0.03em; line-height: 1;
-}
-.welcome-logo span { color: var(--text-subtle); font-weight: 400; }
-.welcome-tagline { position: relative; z-index: 1; font-size: 0.7rem; color: var(--text-subtle); margin-top: 0.4rem; letter-spacing: 0.06em; }
-
-.welcome-body-area { padding: 1.5rem; }
-
-.welcome-desc {
-  font-size: 0.82rem; color: var(--text-muted); line-height: 1.7;
-  margin-bottom: 1.25rem;
-}
-.welcome-desc strong { color: var(--text); font-weight: 700; }
-
-.welcome-actions { display: flex; flex-direction: column; gap: 0.6rem; }
-
-.welcome-btn-primary {
+.btn-full {
   display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-  padding: 0.85rem;
-  background: var(--bg-elevated); border: 1px solid var(--border-active);
-  border-radius: var(--radius-md); color: var(--white);
-  font-family: var(--font); font-size: 0.78rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer; transition: var(--transition);
+  padding: 0.7rem 1.25rem; font-family: var(--font);
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); min-height: 40px;
 }
-.welcome-btn-primary:hover { background: var(--bg-hover); border-color: var(--white); }
 
-.welcome-links { display: flex; gap: 0.5rem; }
-
-.welcome-btn-secondary {
-  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
-  padding: 0.65rem 0.5rem;
-  background: transparent; border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--text-muted);
-  font-family: var(--font); font-size: 0.68rem; font-weight: 700;
-  letter-spacing: 0.04em; text-transform: uppercase;
-  cursor: pointer; transition: var(--transition); text-decoration: none;
-}
-.welcome-btn-secondary:hover { border-color: var(--border-hover); color: var(--text); }
-
-.welcome-close {
-  position: absolute; top: 0.75rem; right: 0.75rem; z-index: 10;
-  width: 26px; height: 26px; border-radius: var(--radius);
-  border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.35);
-  color: var(--text-muted); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: var(--transition);
-}
-.welcome-close:hover { color: var(--white); border-color: rgba(255,255,255,0.28); }
-
-/* ─── COPY NOTIFICATION ─── */
-.copy-notification {
-  position: fixed; top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0.85);
+/* ─── CONFIRM ─── */
+.confirm-modal {
   background: var(--bg-card); border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md); width: 100%; max-width: 380px; padding: 1.5rem;
+  transform: scale(0.96) translateY(12px);
+  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1);
+}
+.overlay.open .confirm-modal { transform: scale(1) translateY(0); }
+
+.confirm-icon {
+  width: 40px; height: 40px; margin-bottom: 1rem;
+  background: var(--red-dim); border: 1px solid rgba(252,165,165,0.18);
   border-radius: var(--radius-md);
-  width: 110px; height: 110px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3rem;
-  z-index: 10000; opacity: 0; pointer-events: none;
-  transition: all 0.28s cubic-bezier(0.34,1.4,0.64,1);
+  display: flex; align-items: center; justify-content: center; color: var(--red);
 }
-.copy-notification.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.copy-notification svg { width: 34px; height: 34px; color: var(--text); animation: checkPop 0.22s ease-out; }
-@keyframes checkPop { 0% { transform: scale(0) rotate(-20deg); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.confirm-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+.confirm-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem; }
+.confirm-actions { display: flex; gap: 0.5rem; }
 
-.copy-notification .progress-ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-.copy-notification .progress-ring circle { stroke: var(--border-hover); stroke-width: 2; fill: transparent; stroke-dasharray: 339.292; stroke-dashoffset: 0; }
-.copy-notification .progress-text { font-size: 0.62rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em; }
+/* ─── TOAST ─── */
+.toast-container {
+  position: fixed; bottom: 1.5rem; right: 1rem;
+  z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none;
+}
+@media (min-width: 640px) { .toast-container { right: 1.5rem; } }
 
-/* ─── ERR ─── */
-.err-banner {
-  background: var(--bg-elevated); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 1rem 1.25rem;
-  font-size: 0.78rem; color: var(--text-muted);
+.toast {
   display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.65rem 1rem; background: var(--bg-elevated);
+  border: 1px solid var(--border-hover); border-radius: var(--radius-md);
+  font-size: 0.75rem; color: var(--text); min-width: 200px;
+  pointer-events: all; animation: slideIn 0.22s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.45);
 }
+@keyframes slideIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+.toast.fadeOut { animation: fadeOut 0.22s ease forwards; }
+@keyframes fadeOut { to { opacity: 0; transform: translateX(16px); } }
+
+.toast-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.toast.ok  .toast-dot { background: #86efac; }
+.toast.err .toast-dot { background: #fca5a5; }
+.toast.info .toast-dot { background: var(--text-muted); }
+
+/* ─── SETTINGS ─── */
+.settings-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 1.5rem; max-width: 440px;
+}
+.settings-title {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-subtle); margin-bottom: 1.25rem; padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ─── LOADER ─── */
+.page-loader { display: flex; align-items: center; justify-content: center; padding: 4rem; color: var(--text-subtle); font-size: 0.78rem; gap: 0.6rem; }
+.panel-loader { display: flex; align-items: center; justify-content: center; min-height: 220px; }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--text-muted); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── ERR BANNER ─── */
+.err-banner { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.6rem; }
 .err-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-subtle); flex-shrink: 0; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="hdr">
-    <a class="logo" href="/">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-          <path d="M2 17l10 5 10-5"/>
-          <path d="M2 12l10 5 10-5"/>
-        </svg>
-      </div>
-      <span class="logo-text"><em>Breach</em> Prompt</span>
-    </a>
-    <div class="hdr-right">
-      <a class="btn-admin" href="/admin">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="8" r="4"/>
-          <path d="M20 21a8 8 0 10-16 0"/>
-        </svg>
-        Admin
-      </a>
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-top">
+      <div class="login-logo"><em>Breach</em><span>Prompt</span></div>
+      <div class="login-sub">// admin access</div>
     </div>
-  </div>
-</header>
-
-<div class="hero">
-  <div class="hero-eyebrow">
-    <span>// breach-prompt</span> &nbsp; koleksi prompt ai
-  </div>
-  <h1>Prompt <span class="dim">yang<br>Menembus Batas.</span></h1>
-  <p class="hero-sub">Kumpulan prompt jailbreak untuk berbagai model AI. Gratis, selalu diperbarui.</p>
-  <div class="search-wrap">
-    <div class="search-box">
-      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" id="searchInput" placeholder="Cari prompt...">
-    </div>
-  </div>
-  <div class="stats-row">
-    <div>
-      <div class="stat-n" id="statP">—</div>
-      <div class="stat-l">Total Prompt</div>
-    </div>
-    <div>
-      <div class="stat-n" id="statC">—</div>
-      <div class="stat-l">Kategori</div>
-    </div>
-  </div>
-</div>
-
-<div class="main">
-  <div class="sidebar">
-    <div class="sidebar-label">Kategori</div>
-    <div class="cat-list" id="catList">
-      <div class="cat-loader"><div class="spinner"></div></div>
-    </div>
-  </div>
-  <div class="content">
-    <div class="content-header">
-      <div class="content-title">
-        <span id="activeLabel">Semua Prompt</span>
-        <span class="content-count" id="countLabel"></span>
-      </div>
-      <div class="filter-group">
-        <select class="length-select" id="lengthFilter">
-          <option value="all">Semua Panjang</option>
-          <option value="short">Pendek (&lt;1K)</option>
-          <option value="medium">Sedang (1K–4K)</option>
-          <option value="long">Panjang (&gt;4K)</option>
-        </select>
-        <select class="sort-select" id="sortSel">
-          <option value="newest">Terbaru</option>
-          <option value="oldest">Terlama</option>
-          <option value="az">A–Z</option>
-          <option value="chars-asc">Chars ↑</option>
-          <option value="chars-desc">Chars ↓</option>
-        </select>
-      </div>
-    </div>
-    <div id="gridLoader" class="loader"><div class="spinner"></div></div>
-    <div class="grid" id="grid"></div>
-    <div class="pagination" id="pagination"></div>
-  </div>
-</div>
-
-<footer>
-  breach-prompt &mdash; crafted by <a href="#">you</a>
-</footer>
-
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <div class="modal-header">
+    <div class="login-form">
       <div>
-        <div class="modal-cat" id="mBadge"></div>
-        <div class="modal-title" id="mTitle"></div>
-        <div class="modal-description" id="mDescription"></div>
-        <div class="modal-stats" id="mStats"></div>
+        <label class="field-label">Username</label>
+        <input class="field-input" type="text" id="loginUser" placeholder="admin" autocomplete="username">
       </div>
-      <button class="close-btn" onclick="closeModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="prompt-content" id="mBody"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="modal-copy" id="mCopyBtn" onclick="copyModal()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="13" height="13" rx="2"/>
-          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-        </svg>
-        Copy Prompt
-      </button>
+      <div>
+        <label class="field-label">Password</label>
+        <input class="field-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="login-err" id="loginErr">Username atau password salah.</div>
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">Masuk</button>
     </div>
   </div>
 </div>
 
-<div class="welcome-overlay" id="welcomeOverlay">
-  <div class="welcome-modal">
-    <button class="welcome-close" onclick="closeWelcome()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-    <div class="welcome-top">
-      <div class="welcome-logo">Breach<span>Prompt</span></div>
-      <div class="welcome-tagline">// jailbreak prompt collection</div>
-    </div>
-    <div class="welcome-body-area">
-      <p class="welcome-desc">
-        <strong>Koleksi prompt terbaik</strong> yang dikurasi khusus — tempat para AI enthusiast berbagi dan berkembang.<br><br>
-        Semua prompt di sini <strong>gratis</strong>, bebas dipakai, dan terus diperbarui.
-      </p>
-      <div class="welcome-actions">
-        <button class="welcome-btn-primary" onclick="closeWelcome()">
-          Mulai Eksplorasi
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/>
-            <polyline points="12 5 19 12 12 19"/>
+<!-- APP -->
+<div class="app" id="app">
+  <header>
+    <div class="hdr">
+      <a class="logo" href="/">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
           </svg>
+        </div>
+        <span class="logo-text"><em>Breach</em> Prompt</span>
+      </a>
+      <div class="hdr-right">
+        <span class="admin-badge">Admin</span>
+        <button class="btn-sm btn-ghost" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('stats', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistik
+      </button>
+      <button class="tab-btn" onclick="switchTab('prompts', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Prompt
+        <span class="tab-count" id="tabPromptCount">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('categories', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Kategori
+        <span class="tab-count" id="tabCatCount">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('settings', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+
+    <!-- STATS PANEL -->
+    <div class="panel active" id="panel-stats">
+      <div id="statsLoading" class="panel-loader"><div class="spinner"></div></div>
+      <div id="statsContent" style="display:none;">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card"><div class="stat-card-label">Total Prompt</div><div class="stat-card-val" id="sTotal">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Kategori</div><div class="stat-card-val" id="sCat">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Prompt Baru (24j)</div><div class="stat-card-val" id="sNew">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Rata-rata Char</div><div class="stat-card-val" id="sAvg">—</div></div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-title">Prompt per Kategori</div>
+            <div class="bar-list" id="catBars"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Distribusi Panjang</div>
+            <div class="len-list" id="lenDist"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMPTS PANEL -->
+    <div class="panel" id="panel-prompts">
+      <div id="promptsLoading" class="panel-loader"><div class="spinner"></div></div>
+      <div id="promptsContent" style="display:none;">
+      <div class="section-hdr">
+        <div class="section-title">
+          Daftar Prompt
+          <span class="tab-count" id="promptTotal">0</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <div class="search-bar">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-subtle);flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari prompt..." id="promptSearch" oninput="renderPromptsTable()">
+          </div>
+          <button class="btn-sm btn-white" onclick="openPromptModal()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Prompt
+          </button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-inner">
+          <table>
+            <thead>
+              <tr>
+                <th>Judul</th>
+                <th>Kategori</th>
+                <th>Panjang</th>
+                <th>Dibuat</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="promptsBody"></tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES PANEL -->
+    <div class="panel" id="panel-categories">
+      <div id="catsLoading" class="panel-loader"><div class="spinner"></div></div>
+      <div id="catsContent" style="display:none;">
+      <div class="section-hdr">
+        <div class="section-title">
+          Daftar Kategori
+          <span class="tab-count" id="catTotal">0</span>
+        </div>
+        <button class="btn-sm btn-white" onclick="openCatModal()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Kategori
         </button>
-        <div class="welcome-links">
-          <a href="https://whatsapp.com/channel/0029VbBlIDBEquiOKETQXZ1B" target="_blank" class="welcome-btn-secondary">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-            </svg>
-            Saluran
-          </a>
-          <a href="https://chat.whatsapp.com/F3YYt8ptdXDA5AJ1pNNe2h" target="_blank" class="welcome-btn-secondary">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            Grup
-          </a>
+      </div>
+      <div class="table-wrap">
+        <div class="table-inner">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>ID</th>
+                <th>Jumlah Prompt</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="catsBody"></tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="panel" id="panel-settings">
+      <div class="settings-card">
+        <div class="settings-title">Ganti Password Admin</div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem;">
+          <div>
+            <label class="field-label">Password Lama</label>
+            <input class="field-input" type="password" id="oldPass" placeholder="••••••••">
+          </div>
+          <div>
+            <label class="field-label">Password Baru</label>
+            <input class="field-input" type="password" id="newPass" placeholder="••••••••">
+          </div>
+          <div>
+            <label class="field-label">Konfirmasi Password Baru</label>
+            <input class="field-input" type="password" id="confPass" placeholder="••••••••">
+          </div>
+          <button class="btn-sm btn-white" style="width:fit-content;margin-top:0.25rem;" onclick="changePassword()">Simpan Password</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="copy-notification" id="copyNotification">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-  <svg class="progress-ring" width="110" height="110" viewBox="0 0 110 110">
-    <circle cx="55" cy="55" r="54"/>
-  </svg>
-  <div class="progress-text" id="copyNotificationText">Tersalin!</div>
+<!-- PROMPT MODAL -->
+<div class="overlay" id="promptOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="promptModalTitle">Tambah Prompt</div>
+      <button class="close-btn" onclick="closePromptModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editPromptId">
+      <div class="field">
+        <label class="field-label">Judul *</label>
+        <input class="field-input" type="text" id="fTitle" placeholder="Nama prompt...">
+      </div>
+      <div class="field">
+        <label class="field-label">Deskripsi</label>
+        <input class="field-input" type="text" id="fDesc" placeholder="Deskripsi singkat...">
+      </div>
+      <div class="field">
+        <label class="field-label">Isi Prompt *</label>
+        <textarea class="field-textarea" id="fContent" placeholder="Masukkan prompt disini..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Kategori</label>
+        <div class="cat-checkboxes" id="catCheckboxes"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-full btn-ghost" onclick="closePromptModal()">Batal</button>
+      <button class="btn-full btn-white" onclick="savePrompt()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan
+      </button>
+    </div>
+  </div>
 </div>
 
+<!-- CATEGORY MODAL -->
+<div class="overlay" id="catOverlay">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="catModalTitle">Tambah Kategori</div>
+      <button class="close-btn" onclick="closeCatModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editCatId">
+      <div class="field">
+        <label class="field-label">Nama Kategori *</label>
+        <input class="field-input" type="text" id="fCatName" placeholder="contoh: Jailbreak, Roleplay...">
+      </div>
+      <div class="field">
+        <label class="field-label">ID (slug) *</label>
+        <input class="field-input" type="text" id="fCatId" placeholder="jailbreak, roleplay... (auto dari nama)">
+        <span class="field-hint">Huruf kecil, tanpa spasi. Auto-generate dari nama.</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-full btn-ghost" onclick="closeCatModal()">Batal</button>
+      <button class="btn-full btn-white" onclick="saveCat()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="confirmOverlay">
+  <div class="confirm-modal">
+    <div class="confirm-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+    </div>
+    <div class="confirm-title" id="confirmTitle">Hapus item ini?</div>
+    <div class="confirm-desc" id="confirmDesc">Tindakan ini tidak bisa dibatalkan.</div>
+    <div class="confirm-actions">
+      <button class="btn-full btn-ghost" style="flex:1;" onclick="closeConfirm()">Batal</button>
+      <button class="btn-full btn-danger" style="flex:1;" id="confirmOkBtn">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
 <script>
-
-
 let cats = [];
 let prompts = [];
-let activeCat = 'all';
-let query = '';
-let sort = 'newest';
-let lengthFilter = 'all';
-let curPrompt = null;
-let currentPage = 1;
-const ITEMS_PER_PAGE = 10;
+let sessionUser = null;
 
-function getLengthClass(n) {
-  if (n < 1000) return 'short';
-  if (n < 4000) return 'medium';
-  return 'long';
+async function api(path, body = null) {
+  const opts = { headers: { 'Content-Type': 'application/json' } };
+  if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+  const res = await fetch(path, opts);
+  return res.json();
 }
 
-function formatNum(n) {
-  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
-  return String(n);
+async function apiPut(path, body) {
+  const res = await fetch(path, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
 }
 
-function escapeHtml(t) {
-  if (!t) return '';
-  return String(t)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+async function apiDelete(path, body) {
+  const res = await fetch(path, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
 }
 
-async function init() {
+async function doLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginErr');
+  if (!user || !pass) { err.textContent = 'Isi username dan password.'; err.classList.add('show'); return; }
+  btn.disabled = true; btn.textContent = 'Memeriksa...';
+  err.classList.remove('show');
   try {
-    const { cats: c, prompts: p } = await fetch('/api/data').then(r => r.json());
+    const res = await api('/api/admin/login', { username: user, password: pass });
+    if (!res.ok) throw new Error('wrong');
+    sessionUser = user;
+    sessionStorage.setItem('bp_admin', user);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    await loadAll();
+  } catch {
+    err.textContent = 'Username atau password salah.';
+    err.classList.add('show');
+  }
+  btn.disabled = false; btn.textContent = 'Masuk';
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginPass').focus(); });
+
+function doLogout() {
+  sessionStorage.removeItem('bp_admin');
+  sessionUser = null;
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPass').value = '';
+}
+
+async function checkSession() {
+  const u = sessionStorage.getItem('bp_admin');
+  if (!u) return;
+  sessionUser = u;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  await loadAll();
+}
+
+async function loadAll() {
+  ['stats','prompts','cats'].forEach(k => {
+    const loader = document.getElementById(k + 'Loading');
+    const content = document.getElementById(k + 'Content');
+    if (loader) loader.style.display = 'flex';
+    if (content) content.style.display = 'none';
+  });
+  try {
+    const { cats: c, prompts: p } = await api('/api/data');
     cats = c || [];
     prompts = (p || []).map(prompt => {
       prompt.charCount = prompt.content ? prompt.content.length : 0;
-      prompt.lengthClass = getLengthClass(prompt.charCount);
+      prompt.lengthClass = getLenClass(prompt.charCount);
       prompt.categories = Array.isArray(prompt.category_ids)
         ? cats.filter(c => prompt.category_ids.includes(c.id))
         : [];
       return prompt;
     });
-    document.getElementById('gridLoader').style.display = 'none';
-    document.getElementById('statP').textContent = prompts.length;
-    document.getElementById('statC').textContent = cats.length;
-    renderCats();
-    applyFiltersAndRender();
-    setTimeout(showWelcome, 600);
+
+    document.getElementById('tabPromptCount').textContent = prompts.length;
+    document.getElementById('tabCatCount').textContent = cats.length;
+    document.getElementById('promptTotal').textContent = prompts.length;
+    document.getElementById('catTotal').textContent = cats.length;
+
+    renderStats();
+    renderPromptsTable();
+    renderCatsTable();
+
+    ['stats','prompts','cats'].forEach(k => {
+      const loader = document.getElementById(k + 'Loading');
+      const content = document.getElementById(k + 'Content');
+      if (loader) loader.style.display = 'none';
+      if (content) content.style.display = 'block';
+    });
   } catch (e) {
-    console.error(e);
-    showErr();
+    ['stats','prompts','cats'].forEach(k => {
+      const loader = document.getElementById(k + 'Loading');
+      if (loader) loader.style.display = 'none';
+    });
+    toast('Gagal memuat data Redis.', 'err');
   }
 }
 
-function showWelcome() {
-  if (sessionStorage.getItem('bp-visited')) return;
-  document.getElementById('welcomeOverlay').classList.add('show');
+function getLenClass(n) {
+  if (n < 1000) return 'short';
+  if (n < 4000) return 'medium';
+  return 'long';
 }
 
-function closeWelcome() {
-  document.getElementById('welcomeOverlay').classList.remove('show');
-  sessionStorage.setItem('bp-visited', '1');
+function fmtNum(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
 }
 
-function showErr() {
-  document.getElementById('gridLoader').style.display = 'none';
-  document.getElementById('grid').innerHTML = `
-    <div class="empty">
-      <div class="err-banner" style="max-width:420px;margin:0 auto;">
-        <div class="err-dot"></div>
-        <span>Gagal memuat data. Cek koneksi Redis atau env variable.</span>
-      </div>
-    </div>`;
-  document.getElementById('catList').innerHTML = '';
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-function renderCats() {
-  const list = document.getElementById('catList');
+function esc(t) {
+  if (!t) return '';
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderStats() {
+  const total = prompts.length;
+  const now = new Date();
+  const newToday = prompts.filter(p => p.created_at && (now - new Date(p.created_at)) < 86400000).length;
+  const avg = total ? Math.round(prompts.reduce((a, p) => a + p.charCount, 0) / total) : 0;
+
+  document.getElementById('sTotal').textContent = total;
+  document.getElementById('sCat').textContent = cats.length;
+  document.getElementById('sNew').textContent = newToday;
+  document.getElementById('sAvg').textContent = fmtNum(avg);
+
   const counts = {};
   prompts.forEach(p => {
-    p.categories.forEach(c => { counts[c.id] = (counts[c.id] || 0) + 1; });
+    (p.category_ids || []).forEach(cid => { counts[cid] = (counts[cid] || 0) + 1; });
   });
-
-  let html = `
-    <button class="cat-item ${activeCat === 'all' ? 'active' : ''}" onclick="selectCat('all')">
-      <div class="cat-item-left">
-        <span class="cat-dot"></span>
-        Semua
-      </div>
-      <span class="cat-count">${prompts.length}</span>
-    </button>`;
-
-  cats.forEach(c => {
-    const cnt = counts[c.id] || 0;
-    html += `
-      <button class="cat-item ${activeCat === c.id ? 'active' : ''}" onclick="selectCat('${c.id}')">
-        <div class="cat-item-left">
-          <span class="cat-dot"></span>
-          ${escapeHtml(c.name)}
+  const maxCount = Math.max(1, ...Object.values(counts));
+  const catBars = document.getElementById('catBars');
+  if (!cats.length) { catBars.innerHTML = '<div style="font-size:0.72rem;color:var(--text-subtle);">Belum ada kategori.</div>'; }
+  else {
+    catBars.innerHTML = cats.map(c => {
+      const cnt = counts[c.id] || 0;
+      const pct = Math.round((cnt / maxCount) * 100);
+      return `<div class="bar-item">
+        <div class="bar-label-row">
+          <span class="bar-name">${esc(c.name)}</span>
+          <span class="bar-val">${cnt}</span>
         </div>
-        <span class="cat-count">${cnt}</span>
-      </button>`;
-  });
-
-  list.innerHTML = html;
-}
-
-function selectCat(id) {
-  activeCat = id;
-  currentPage = 1;
-  document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  applyFiltersAndRender();
-}
-
-function applyFiltersAndRender() {
-  let filtered = [...prompts];
-  if (activeCat !== 'all') filtered = filtered.filter(p => p.category_ids?.includes(activeCat));
-  if (query) {
-    const q = query.toLowerCase();
-    filtered = filtered.filter(p =>
-      (p.title || '').toLowerCase().includes(q) ||
-      (p.content || '').toLowerCase().includes(q) ||
-      (p.description || '').toLowerCase().includes(q)
-    );
-  }
-  if (lengthFilter !== 'all') filtered = filtered.filter(p => p.lengthClass === lengthFilter);
-
-  filtered.sort((a, b) => {
-    if (sort === 'newest') return new Date(b.created_at) - new Date(a.created_at);
-    if (sort === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
-    if (sort === 'az') return (a.title || '').localeCompare(b.title || '');
-    if (sort === 'chars-asc') return a.charCount - b.charCount;
-    if (sort === 'chars-desc') return b.charCount - a.charCount;
-    return 0;
-  });
-
-  const total = filtered.length;
-  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-
-  const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  const slice = filtered.slice(start, start + ITEMS_PER_PAGE);
-
-  const label = activeCat === 'all' ? 'Semua Prompt' : (cats.find(c => c.id === activeCat)?.name || activeCat);
-  document.getElementById('activeLabel').textContent = label;
-  document.getElementById('countLabel').textContent = `${total} prompt`;
-
-  renderGrid(slice, start);
-  renderPagination(total, totalPages);
-}
-
-function renderGrid(data, startIndex) {
-  const grid = document.getElementById('grid');
-  if (!data.length) {
-    grid.innerHTML = `
-      <div class="empty">
-        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <h3>Tidak ada prompt</h3>
-        <p>Coba ubah filter atau tambahkan prompt lewat admin panel.</p>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
       </div>`;
+    }).join('');
+  }
+
+  const short = prompts.filter(p => p.lengthClass === 'short').length;
+  const medium = prompts.filter(p => p.lengthClass === 'medium').length;
+  const long = prompts.filter(p => p.lengthClass === 'long').length;
+  document.getElementById('lenDist').innerHTML = `
+    <div class="len-item"><div class="len-dot" style="background:#4ade80"></div><div class="len-label">Pendek (&lt;1K char)</div><div class="len-val">${short}</div></div>
+    <div class="len-item"><div class="len-dot" style="background:#facc15"></div><div class="len-label">Sedang (1K–4K char)</div><div class="len-val">${medium}</div></div>
+    <div class="len-item"><div class="len-dot" style="background:#f87171"></div><div class="len-label">Panjang (&gt;4K char)</div><div class="len-val">${long}</div></div>
+  `;
+}
+
+function renderPromptsTable() {
+  const q = (document.getElementById('promptSearch')?.value || '').toLowerCase();
+  let data = [...prompts];
+  if (q) data = data.filter(p =>
+    (p.title || '').toLowerCase().includes(q) ||
+    (p.description || '').toLowerCase().includes(q)
+  );
+  data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const body = document.getElementById('promptsBody');
+  if (!data.length) {
+    body.innerHTML = `<tr><td colspan="5" class="table-empty">Tidak ada prompt.</td></tr>`;
     return;
   }
-
-  grid.innerHTML = data.map((p, i) => {
-    const catNames = p.categories.map(c => c.name).join(', ');
-    const date = p.created_at
-      ? new Date(p.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-      : '';
-    const isNew = p.created_at && (new Date() - new Date(p.created_at)) / (1000 * 60 * 60) <= 4;
-
-    return `
-      <div class="card" onclick="openModal('${p.id}')" style="animation-delay:${i * 0.04}s">
-        <div class="card-stripe"></div>
-        <div class="card-header">
-          <div class="card-cat">${escapeHtml(catNames || 'Uncategorized')}</div>
-          ${isNew ? '<span class="new-badge">NEW</span>' : ''}
+  body.innerHTML = data.map(p => `
+    <tr>
+      <td>
+        <div class="td-title">${esc(p.title)}</div>
+        ${p.description ? `<div style="font-size:0.7rem;color:var(--text-subtle);margin-top:0.2rem;">${esc(p.description)}</div>` : ''}
+      </td>
+      <td class="td-cat">${p.categories.map(c => `<span class="pill">${esc(c.name)}</span>`).join(' ') || '<span style="color:var(--text-subtle);">—</span>'}</td>
+      <td><span class="pill ${p.lengthClass}">${fmtNum(p.charCount)} char</span></td>
+      <td style="white-space:nowrap;">${fmtDate(p.created_at)}</td>
+      <td>
+        <div class="actions">
+          <button class="btn-sm btn-ghost" onclick="openEditPrompt('${p.id}')">Edit</button>
+          <button class="btn-sm btn-danger" onclick="confirmDeletePrompt('${p.id}')">Hapus</button>
         </div>
-        <div class="card-title">${escapeHtml(p.title)}</div>
-        ${p.description ? `<div class="card-description">${escapeHtml(p.description)}</div>` : ''}
-        <div class="card-preview">${escapeHtml(p.content)}</div>
-        <div class="card-stats">
-          <span class="char-pill ${p.lengthClass}">
-            ${formatNum(p.charCount)} char
-          </span>
-        </div>
-        <div class="card-footer">
-          <button class="copy-btn" onclick="event.stopPropagation();quickCopy('${p.id}',this)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="9" y="9" width="13" height="13" rx="2"/>
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-            </svg>
-            Copy
-          </button>
-          <span class="card-date">${date}</span>
-        </div>
-      </div>`;
-  }).join('');
+      </td>
+    </tr>`).join('');
 }
 
-function renderPagination(total, totalPages) {
-  const el = document.getElementById('pagination');
-  if (total <= ITEMS_PER_PAGE) { el.innerHTML = ''; return; }
-
-  let html = '';
-  const maxV = 3;
-  const startP = Math.max(1, currentPage - Math.floor(maxV / 2));
-  const endP = Math.min(totalPages, startP + maxV - 1);
-
-  if (currentPage > 1) html += `<button class="page-btn" onclick="changePage(${currentPage - 1})">&#8249;</button>`;
-  if (startP > 1) {
-    html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
-    if (startP > 2) html += `<span class="page-btn" style="border:none;background:transparent;pointer-events:none;">···</span>`;
+function renderCatsTable() {
+  const counts = {};
+  prompts.forEach(p => {
+    (p.category_ids || []).forEach(cid => { counts[cid] = (counts[cid] || 0) + 1; });
+  });
+  const body = document.getElementById('catsBody');
+  if (!cats.length) {
+    body.innerHTML = `<tr><td colspan="4" class="table-empty">Belum ada kategori.</td></tr>`;
+    return;
   }
-  for (let i = startP; i <= endP; i++) {
-    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-  }
-  if (endP < totalPages) {
-    if (endP < totalPages - 1) html += `<span class="page-btn" style="border:none;background:transparent;pointer-events:none;">···</span>`;
-    html += `<button class="page-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
-  }
-  if (currentPage < totalPages) html += `<button class="page-btn" onclick="changePage(${currentPage + 1})">&#8250;</button>`;
-
-  el.innerHTML = html;
+  body.innerHTML = cats.map(c => `
+    <tr>
+      <td style="font-weight:700;color:var(--text);">${esc(c.name)}</td>
+      <td><code style="font-size:0.72rem;color:var(--text-subtle);">${esc(c.id)}</code></td>
+      <td>${counts[c.id] || 0} prompt</td>
+      <td>
+        <div class="actions">
+          <button class="btn-sm btn-ghost" onclick="openEditCat('${c.id}')">Edit</button>
+          <button class="btn-sm btn-danger" onclick="confirmDeleteCat('${c.id}')">Hapus</button>
+        </div>
+      </td>
+    </tr>`).join('');
 }
 
-function changePage(p) { currentPage = p; applyFiltersAndRender(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`panel-${name}`).classList.add('active');
+}
 
-function openModal(id) {
-  const p = prompts.find(x => x.id === id);
-  if (!p) return;
-  curPrompt = p;
-
-  const catNames = p.categories.map(c => c.name).join(', ');
-  const wordCount = Math.ceil(p.charCount / 5);
-  const tokenEst = Math.ceil(p.charCount / 4);
-
-  document.getElementById('mBadge').textContent = catNames || 'Uncategorized';
-  document.getElementById('mTitle').textContent = p.title;
-  document.getElementById('mDescription').textContent = p.description || '';
-  document.getElementById('mStats').innerHTML = `
-    <div class="stat-item">
-      <div class="stat-label">Karakter</div>
-      <div class="stat-value">${p.charCount.toLocaleString('id-ID')}</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Kata (est)</div>
-      <div class="stat-value">${wordCount.toLocaleString('id-ID')}</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Token (est)</div>
-      <div class="stat-value">~${tokenEst.toLocaleString('id-ID')}</div>
-    </div>`;
-  document.getElementById('mBody').textContent = p.content;
-
-  const btn = document.getElementById('mCopyBtn');
-  btn.className = 'modal-copy';
-  btn.innerHTML = `
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="9" y="9" width="13" height="13" rx="2"/>
-      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-    </svg>
-    Copy Prompt`;
-
-  document.getElementById('overlay').classList.add('open');
+function openPromptModal(id = null) {
+  document.getElementById('editPromptId').value = '';
+  document.getElementById('fTitle').value = '';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fContent').value = '';
+  document.getElementById('promptModalTitle').textContent = 'Tambah Prompt';
+  renderCatCheckboxes([]);
+  document.getElementById('promptOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
+function openEditPrompt(id) {
+  const p = prompts.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('editPromptId').value = id;
+  document.getElementById('fTitle').value = p.title || '';
+  document.getElementById('fDesc').value = p.description || '';
+  document.getElementById('fContent').value = p.content || '';
+  document.getElementById('promptModalTitle').textContent = 'Edit Prompt';
+  renderCatCheckboxes(p.category_ids || []);
+  document.getElementById('promptOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderCatCheckboxes(selected) {
+  const wrap = document.getElementById('catCheckboxes');
+  if (!cats.length) { wrap.innerHTML = '<span style="font-size:0.72rem;color:var(--text-subtle);">Belum ada kategori. Buat dulu di tab Kategori.</span>'; return; }
+  wrap.innerHTML = cats.map(c => {
+    const checked = selected.includes(c.id) ? 'checked' : '';
+    return `<label class="cat-check-label ${checked ? 'checked' : ''}" onclick="toggleCatCheck(this,'${c.id}')">
+      <input type="checkbox" value="${c.id}" ${checked}>
+      ${esc(c.name)}
+    </label>`;
+  }).join('');
+}
+
+function toggleCatCheck(label) {
+  label.classList.toggle('checked');
+  label.querySelector('input').checked = label.classList.contains('checked');
+}
+
+function getSelectedCats() {
+  return [...document.querySelectorAll('#catCheckboxes input:checked')].map(i => i.value);
+}
+
+function closePromptModal() {
+  document.getElementById('promptOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
 
-async function copyModal() {
-  if (!curPrompt) return;
-  await navigator.clipboard.writeText(curPrompt.content);
-  const btn = document.getElementById('mCopyBtn');
-  btn.className = 'modal-copy ok';
-  btn.innerHTML = `
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-    Tersalin!`;
-  showCopyNotification();
-  setTimeout(() => {
-    btn.className = 'modal-copy';
-    btn.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="9" width="13" height="13" rx="2"/>
-        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-      </svg>
-      Copy Prompt`;
-  }, 2000);
+async function savePrompt() {
+  const id = document.getElementById('editPromptId').value;
+  const title = document.getElementById('fTitle').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  const content = document.getElementById('fContent').value.trim();
+  const category_ids = getSelectedCats();
+  if (!title || !content) { toast('Judul dan isi prompt wajib diisi.', 'err'); return; }
+  const isEdit = !!id;
+  const created_at = isEdit ? (prompts.find(p => p.id === id)?.created_at || new Date().toISOString()) : new Date().toISOString();
+  try {
+    let res;
+    if (isEdit) {
+      res = await apiPut('/api/admin/prompt', { id, title, description: desc, content, category_ids, created_at });
+    } else {
+      res = await api('/api/admin/prompt', { title, description: desc, content, category_ids });
+    }
+    if (!res.ok) throw new Error();
+    toast(isEdit ? 'Prompt berhasil diperbarui.' : 'Prompt berhasil ditambahkan.', 'ok');
+    closePromptModal();
+    await loadAll();
+  } catch { toast('Gagal menyimpan prompt.', 'err'); }
 }
 
-async function quickCopy(id, btn) {
+function confirmDeletePrompt(id) {
   const p = prompts.find(x => x.id === id);
-  if (!p) return;
-  await navigator.clipboard.writeText(p.content);
-  btn.className = 'copy-btn ok';
-  btn.innerHTML = `
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-    Copied!`;
-  showCopyNotification();
-  setTimeout(() => {
-    btn.className = 'copy-btn';
-    btn.innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="9" width="13" height="13" rx="2"/>
-        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-      </svg>
-      Copy`;
-  }, 2000);
+  document.getElementById('confirmTitle').textContent = 'Hapus Prompt?';
+  document.getElementById('confirmDesc').textContent = `"${p?.title || id}" akan dihapus permanen.`;
+  document.getElementById('confirmOkBtn').onclick = () => deletePrompt(id);
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-function showCopyNotification() {
-  const el = document.getElementById('copyNotification');
-  const circle = el.querySelector('circle');
-  const text = document.getElementById('copyNotificationText');
-  el.classList.add('show');
-  const r = 54;
-  const circumference = 2 * Math.PI * r;
-  const start = Date.now();
-  const duration = 2000;
-  circle.style.strokeDasharray = `${circumference}`;
-  circle.style.strokeDashoffset = '0';
+async function deletePrompt(id) {
+  try {
+    const res = await apiDelete('/api/admin/prompt', { id });
+    if (!res.ok) throw new Error();
+    toast('Prompt dihapus.', 'ok');
+    closeConfirm();
+    await loadAll();
+  } catch { toast('Gagal menghapus.', 'err'); }
+}
 
-  function tick() {
-    const elapsed = Date.now() - start;
-    const progress = Math.min(elapsed / duration, 1);
-    circle.style.strokeDashoffset = circumference * (1 - progress);
-    const rem = Math.ceil((duration - elapsed) / 1000);
-    text.textContent = rem > 0 ? `${rem}s` : 'Copied!';
-    if (progress < 1) requestAnimationFrame(tick);
+function openCatModal() {
+  document.getElementById('editCatId').value = '';
+  document.getElementById('fCatName').value = '';
+  document.getElementById('fCatId').value = '';
+  document.getElementById('catModalTitle').textContent = 'Tambah Kategori';
+  document.getElementById('catOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openEditCat(id) {
+  const c = cats.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('editCatId').value = id;
+  document.getElementById('fCatName').value = c.name || '';
+  document.getElementById('fCatId').value = id;
+  document.getElementById('catModalTitle').textContent = 'Edit Kategori';
+  document.getElementById('catOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('fCatName').addEventListener('input', e => {
+  if (!document.getElementById('editCatId').value) {
+    document.getElementById('fCatId').value = e.target.value
+      .toLowerCase().trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
   }
-  requestAnimationFrame(tick);
-  setTimeout(() => el.classList.remove('show'), duration);
+});
+
+function closeCatModal() {
+  document.getElementById('catOverlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-document.getElementById('searchInput').addEventListener('input', e => {
-  query = e.target.value; currentPage = 1; applyFiltersAndRender();
-});
-document.getElementById('sortSel').addEventListener('change', e => {
-  sort = e.target.value; currentPage = 1; applyFiltersAndRender();
-});
-document.getElementById('lengthFilter').addEventListener('change', e => {
-  lengthFilter = e.target.value; currentPage = 1; applyFiltersAndRender();
-});
-document.getElementById('overlay').addEventListener('click', e => {
-  if (e.target.id === 'overlay') closeModal();
-});
+async function saveCat() {
+  const editId = document.getElementById('editCatId').value;
+  const name = document.getElementById('fCatName').value.trim();
+  const id = document.getElementById('fCatId').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  if (!name || !id) { toast('Nama dan ID kategori wajib diisi.', 'err'); return; }
+  try {
+    let res;
+    if (editId) {
+      res = await apiPut('/api/admin/category', { oldId: editId, id, name });
+    } else {
+      res = await api('/api/admin/category', { id, name });
+    }
+    if (res.error === 'ID already exists') { toast('ID kategori sudah dipakai.', 'err'); return; }
+    if (!res.ok) throw new Error();
+    toast(editId ? 'Kategori diperbarui.' : 'Kategori ditambahkan.', 'ok');
+    closeCatModal();
+    await loadAll();
+  } catch { toast('Gagal menyimpan kategori.', 'err'); }
+}
+
+function confirmDeleteCat(id) {
+  const c = cats.find(x => x.id === id);
+  document.getElementById('confirmTitle').textContent = 'Hapus Kategori?';
+  document.getElementById('confirmDesc').textContent = `Kategori "${c?.name || id}" akan dihapus. Prompt yang terkait tidak ikut terhapus.`;
+  document.getElementById('confirmOkBtn').onclick = () => deleteCat(id);
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+async function deleteCat(id) {
+  try {
+    const res = await apiDelete('/api/admin/category', { id });
+    if (!res.ok) throw new Error();
+    toast('Kategori dihapus.', 'ok');
+    closeConfirm();
+    await loadAll();
+  } catch { toast('Gagal menghapus.', 'err'); }
+}
+
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function changePassword() {
+  const oldP = document.getElementById('oldPass').value;
+  const newP = document.getElementById('newPass').value;
+  const confP = document.getElementById('confPass').value;
+  if (!oldP || !newP || !confP) { toast('Semua field harus diisi.', 'err'); return; }
+  if (newP !== confP) { toast('Konfirmasi password tidak cocok.', 'err'); return; }
+  if (newP.length < 6) { toast('Password minimal 6 karakter.', 'err'); return; }
+  try {
+    const res = await api('/api/admin/password', { username: sessionUser, oldPassword: oldP, newPassword: newP });
+    if (!res.ok) { toast(res.error === 'Wrong password' ? 'Password lama salah.' : 'Gagal.', 'err'); return; }
+    document.getElementById('oldPass').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('confPass').value = '';
+    toast('Password berhasil diubah.', 'ok');
+  } catch { toast('Gagal mengubah password.', 'err'); }
+}
+
+function toast(msg, type = 'info') {
+  const wrap = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<div class="toast-dot"></div><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('fadeOut'); setTimeout(() => el.remove(), 300); }, 3000);
+}
+
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') { closePromptModal(); closeCatModal(); closeConfirm(); }
 });
 
-init();
+[document.getElementById('promptOverlay'), document.getElementById('catOverlay'), document.getElementById('confirmOverlay')].forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) { closePromptModal(); closeCatModal(); closeConfirm(); } });
+});
+
+checkSession();
 </script>
 </body>
 </html>
