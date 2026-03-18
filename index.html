@@ -979,8 +979,7 @@ footer a:hover { color: var(--white); }
 </div>
 
 <script>
-const R_U = typeof process !== 'undefined' ? process.env.R_U : window.__REDIS_URL__;
-const R_T = typeof process !== 'undefined' ? process.env.R_T : window.__REDIS_TOKEN__;
+let R_U = '', R_T = '';
 
 async function redis(cmd, ...args) {
   const body = JSON.stringify([cmd, ...args]);
@@ -1405,7 +1404,18 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
 });
 
-init();
+async function bootstrap() {
+  try {
+    const cfg = await fetch('/api/config').then(r => r.json());
+    R_U = cfg.R_U;
+    R_T = cfg.R_T;
+  } catch {
+    showErr(); return;
+  }
+  init();
+}
+
+bootstrap();
 </script>
 </body>
 </html>
