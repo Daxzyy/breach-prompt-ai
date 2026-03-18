@@ -130,7 +130,7 @@ header {
 @media (min-width: 640px) { .hdr { padding: 0 2rem; height: 62px; } }
 
 .logo {
-  display: flex; align-items: center; gap: 0.55rem;
+  display: flex; align-items: center; gap: 0.4rem;
   text-decoration: none; color: var(--text);
   font-weight: 700; font-size: 1rem; letter-spacing: 0.03em;
 }
@@ -437,6 +437,7 @@ tr:hover td { background: var(--bg-elevated); }
 
 /* ─── LOADER ─── */
 .page-loader { display: flex; align-items: center; justify-content: center; padding: 4rem; color: var(--text-subtle); font-size: 0.78rem; gap: 0.6rem; }
+.panel-loader { display: flex; align-items: center; justify-content: center; min-height: 220px; }
 .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--text-muted); border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -485,7 +486,6 @@ tr:hover td { background: var(--bg-elevated); }
       </a>
       <div class="hdr-right">
         <span class="admin-badge">Admin</span>
-        <a href="/" class="btn-sm btn-ghost">← Lihat Site</a>
         <button class="btn-sm btn-ghost" onclick="doLogout()">Logout</button>
       </div>
     </div>
@@ -515,26 +515,31 @@ tr:hover td { background: var(--bg-elevated); }
 
     <!-- STATS PANEL -->
     <div class="panel active" id="panel-stats">
-      <div class="stats-grid" id="statsGrid">
-        <div class="stat-card"><div class="stat-card-label">Total Prompt</div><div class="stat-card-val" id="sTotal">—</div></div>
-        <div class="stat-card"><div class="stat-card-label">Kategori</div><div class="stat-card-val" id="sCat">—</div></div>
-        <div class="stat-card"><div class="stat-card-label">Prompt Baru (24j)</div><div class="stat-card-val" id="sNew">—</div></div>
-        <div class="stat-card"><div class="stat-card-label">Rata-rata Char</div><div class="stat-card-val" id="sAvg">—</div></div>
-      </div>
-      <div class="charts-row">
-        <div class="chart-card">
-          <div class="chart-title">Prompt per Kategori</div>
-          <div class="bar-list" id="catBars"></div>
+      <div id="statsLoading" class="panel-loader"><div class="spinner"></div></div>
+      <div id="statsContent" style="display:none;">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card"><div class="stat-card-label">Total Prompt</div><div class="stat-card-val" id="sTotal">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Kategori</div><div class="stat-card-val" id="sCat">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Prompt Baru (24j)</div><div class="stat-card-val" id="sNew">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Rata-rata Char</div><div class="stat-card-val" id="sAvg">—</div></div>
         </div>
-        <div class="chart-card">
-          <div class="chart-title">Distribusi Panjang</div>
-          <div class="len-list" id="lenDist"></div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-title">Prompt per Kategori</div>
+            <div class="bar-list" id="catBars"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Distribusi Panjang</div>
+            <div class="len-list" id="lenDist"></div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- PROMPTS PANEL -->
     <div class="panel" id="panel-prompts">
+      <div id="promptsLoading" class="panel-loader"><div class="spinner"></div></div>
+      <div id="promptsContent" style="display:none;">
       <div class="section-hdr">
         <div class="section-title">
           Daftar Prompt
@@ -567,10 +572,13 @@ tr:hover td { background: var(--bg-elevated); }
           </table>
         </div>
       </div>
+      </div>
     </div>
 
     <!-- CATEGORIES PANEL -->
     <div class="panel" id="panel-categories">
+      <div id="catsLoading" class="panel-loader"><div class="spinner"></div></div>
+      <div id="catsContent" style="display:none;">
       <div class="section-hdr">
         <div class="section-title">
           Daftar Kategori
@@ -596,9 +604,8 @@ tr:hover td { background: var(--bg-elevated); }
           </table>
         </div>
       </div>
+      </div>
     </div>
-
-    <!-- SETTINGS PANEL -->
     <div class="panel" id="panel-settings">
       <div class="settings-card">
         <div class="settings-title">Ganti Password Admin</div>
@@ -782,6 +789,12 @@ async function checkSession() {
 }
 
 async function loadAll() {
+  ['stats','prompts','cats'].forEach(k => {
+    const loader = document.getElementById(k + 'Loading');
+    const content = document.getElementById(k + 'Content');
+    if (loader) loader.style.display = 'flex';
+    if (content) content.style.display = 'none';
+  });
   try {
     const { cats: c, prompts: p } = await api('/api/data');
     cats = c || [];
@@ -802,7 +815,18 @@ async function loadAll() {
     renderStats();
     renderPromptsTable();
     renderCatsTable();
+
+    ['stats','prompts','cats'].forEach(k => {
+      const loader = document.getElementById(k + 'Loading');
+      const content = document.getElementById(k + 'Content');
+      if (loader) loader.style.display = 'none';
+      if (content) content.style.display = 'block';
+    });
   } catch (e) {
+    ['stats','prompts','cats'].forEach(k => {
+      const loader = document.getElementById(k + 'Loading');
+      if (loader) loader.style.display = 'none';
+    });
     toast('Gagal memuat data Redis.', 'err');
   }
 }
